@@ -16,8 +16,13 @@ variables:
   azureServiceConnectionId: 'myServiceConnection'
   # Project root folder. Point to the folder containing manage.py file.
   projectRoot: $(System.DefaultWorkingDirectory)
+  projectRootPostman: $(System.DefaultWorkingDirectory)/automatedtesting/postman
+  #projectRootJmeter: $(System.DefaultWorkingDirectory)/automatedtesting/jmeter  # MDE to remove
   # Environment name
-  environmentName: 'test'
+  environmentName: 'test-vm'  # MDE 'test'
+  ## Web app name
+  webAppName: 'myAppli3-AppService'  #TODO MDE
+
 
 stages:
 #--------------------------------------------#  
@@ -44,7 +49,7 @@ stages:
         command: 'init'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         backendServiceArm: '$(azureServiceConnectionId)'
-        backendAzureRmResourceGroupName: ''
+        backendAzureRmResourceGroupName: 'Azuredevops'  #Done
         backendAzureRmStorageAccountName: ''
         backendAzureRmContainerName: ''
         backendAzureRmKey: 'test.terraform.tfstate'
@@ -105,7 +110,8 @@ stages:
       displayName: Run Data Validation Tests
       continueOnError: true
       inputs:
-        script: 'newman run TestSuite.Data-Validation.json -e Test.environment.json --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml'
+        script: 'newman run TestSuite.Data-Validation.json --reporters cli,junit --reporter-junit-export ./postman_results/TEST-DataValidation.xml'
+        ## -e Test.environment.json   # MDE: -e unuseful for my test here
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
     # Postman Regression Test Suite    
     # ToDo: Verify the working directory
@@ -113,7 +119,8 @@ stages:
       displayName: Run Regression Tests
       continueOnError: true
       inputs:
-        script: 'newman run TestSuite.Regression.json -e Test.environment.json --reporters cli,junit --reporter-junit-export TEST-Regression.xml'
+        script: 'newman run TestSuite.Regression.json --reporters cli,junit --reporter-junit-export ./postman_results/TEST-Regression.xml'
+        ## -e Test.environment.json   # MDE: -e unuseful for my test here
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
     # Postman - Publish Results 
     # ToDo: Complete the task as explained here: https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=trx%2Cyaml#yaml-snippet
@@ -121,9 +128,9 @@ stages:
       inputs:
         testResultsFormat: 'JUnit'
         testResultsFiles: '**/TEST-*.xml'
-        searchFolder:       # ToDo
+        searchFolder:     '$(System.DefaultWorkingDirectory)/automatedtesting/postman/postman_results'  # MDE ToDo
         mergeTestResults: true
-        testRunTitle:       # ToDo
+        testRunTitle:     'Postman Test'  # ToDo
 
     #--------------------------------------------#
     # Selenium (UI) Test Suite - Archive the package  
@@ -146,7 +153,7 @@ stages:
     - task: ArchiveFiles@2
       displayName: 'Archive FakeRestAPI'
       inputs:
-        rootFolderOrFile: 
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/fakerestapi' # MDE
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
@@ -160,7 +167,7 @@ stages:
     - task: ArchiveFiles@2
       displayName: 'Archive PerformanceTestSuite'
       inputs:
-        rootFolderOrFile: 
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/test_plans' # MDE
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip'
@@ -179,8 +186,8 @@ stages:
   # ToDo: Provide <environment name> you created in your DevOps project
   - deployment: FakeRestAPI
     pool:
-      vmImage: 'Ubuntu-18.04'      
-    environment: <environment name>   # ToDo
+      vmImage: 'Ubuntu-22.04'      # MDE 'Ubuntu-18.04'
+    environment: "$(environmentName)" # MDE <environment name>   # ToDo
     strategy:
       runOnce:
         deploy:
@@ -188,21 +195,25 @@ stages:
           - task: AzureWebApp@1
             displayName: 'Deploy Azure Web App'
             inputs:
-              azureSubscription: ''     # ToDo
-              appName: ''               # ToDo
+              azureSubscription: $(azureServiceConnectionId)     # '' ToDo MDE
+              appName: $(webAppName)          # '' ToDo MDE 
               appType: webApp
-              package: $(Pipeline.Workspace)/<artifact>/<archiveFile>       # ToDo: Use the published zip artifact. 
+              #package: $(Pipeline.Workspace)/<artifact>/<archiveFile>       # ToDo: Use the published zip artifact. 
+              package: $(Pipeline.Workspace)/drop_fakerestapi/$(Build.BuildId)-fakerestapi.zip #MDE
           #--------------------------------------------#    
           # Run JMeter test suite against the App Service
           - task: CmdLine@2
             inputs:
               script: |
-                wget "https://apache.mirrors.lucidnetworks.net//jmeter/binaries/apache-jmeter-5.2.1.tgz"
-                tar -xf apache-jmeter-5.2.1.tgz
+                wget "https://apache.mirrors.lucidnetworks.net//jmeter/binaries/apache-jmeter-5.6.3.tgz"  #MDE 5.2.1 does not work
+                tar -xf apache-jmeter-5.6.3.tgz
                 unzip -o $(Build.BuildId)-perftests.zip
-                ./apache-jmeter-5.2.1/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
+                ./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
                 cat jmeter.log                                                                           # ToDo: Write your commands
-              workingDirectory: $(Pipeline.Workspace)/<artifact>            # ToDo: Use the artifact name from the task above
+                grep -ni summary jmeter.log
+                grep -ni starting jmeter.log
+              #workingDirectory: $(Pipeline.Workspace)/<artifact>            # ToDo: Use the artifact name from the task above
+              package: $(Pipeline.Workspace)/drop-perftests/$(Build.BuildId)-perftests.zip #MDE
               
   #--------------------------------------------#  
   # Selenium | Functional UI Tests
