@@ -11,7 +11,7 @@ trigger:
 pool: myAgentPool
 
 variables:
-  python.version: '3.9.24'  #'3.7.6'
+  #python.version: '3.9.24'  #'3.7.6'
   # ToDo: Replace the service connection name as used in the DevOps project settings
   azureServiceConnectionId: 'myServiceConnection'
   # Project root folder. Point to the folder containing manage.py file.
@@ -51,23 +51,13 @@ stages:
         provider: 'azurerm'
         command: 'validate'
 
-    
-    # Run Terraform Apply
+
+    # Destroy the resources in Azure
     # ToDo: Change the workingDirectory path, as applicable to you
     - task: TerraformTask@5
-      displayName: Terraform apply
+      displayName: Terraform destroy
       inputs:
         provider: 'azurerm'
-        command: 'apply'
+        command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-
-    # # Destroy the resources in Azure
-    # # ToDo: Change the workingDirectory path, as applicable to you
-    # - task: TerraformTask@5
-    #   displayName: Terraform destroy
-    #   inputs:
-    #     provider: 'azurerm'
-    #     command: 'destroy'
-    #     workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-    #     environmentServiceNameAzureRM: '$(azureServiceConnectionId)'        
+        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'        
