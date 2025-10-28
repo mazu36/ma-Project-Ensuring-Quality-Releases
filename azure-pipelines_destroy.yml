@@ -22,7 +22,7 @@ variables:
 stages:
 - stage: Build
   jobs:
-  - job: BuildInfrastructure
+  - job: DestroyInfrastructure
     steps:
     # Install Terraform on the pipeline agent 
     - task: TerraformInstaller@1
