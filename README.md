@@ -47,8 +47,56 @@ https://dev.azure.com/     using the same Azure account
 
 # [A] Instructions for Setting environment by Terraform
 
+
 1. Fork [the Starter repository](https://github.com/udacity/cd1807-Project-Ensuring-Quality-Releases)
 2. Clone the forked repository into your local environment.
+3. Generate an SSH key pair in your local/AZ Cloud shell. 
+4. Put ssh keys into Azure DevOps Library
+    [Use secure file feature in the pipeline library UI to save the "id_rsa" file](https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops#add-a-secure-file)
+    1. Upload a secure file
+        Azure DevOps: <project> / "Project Settings" >> Pipelines >> Library >> "Secure Files"
+        ==> upload a file
+        ==> "OK"
+    2. Set permissions for a secure file
+        Azure DevOps: <project> / "Project Settings" >> Pipelines >> Library >> "Security"
+        select <secure file> 
+            => Security / "Pipeline permissions" / "Approvals and checks"
+        Security            : to set users and security roles that can access the file
+        Pipeline permissions: to select YAML pipelines that can access the file
+        Approvals and checks: to set approvers and other checks for using the file
+42. 
+
++ Secret variable
++ Secure File
+
+We recommend that you don't pass in your public key as plain text to the task configuration. 
+Instead, set a **secret variable** in your pipeline for the contents of your mykey.pub file. 
+
+To set secrets in the web interface, follow these steps:
+
+Go to the Pipelines page, select the appropriate pipeline, and then select Edit.
+Locate the Variables for this pipeline.
+Add or update the variable.
+Select the option to Keep this value secret to store the variable in an encrypted manner.
+Save the pipeline.
+
+
+Then, call the variable in your pipeline definition as $(myPubKey). 
+For the secret part of your key, use the **Secure File library** in Azure Pipelines.
+
+
+### Secret variable in the UI
+To set secrets in the web interface, follow these steps:
+
+Go to the Pipelines page, select the appropriate pipeline, and then select Edit.
+Locate the Variables for this pipeline.
+Add or update the variable.
+Select the option to **Keep this value secret** to store the variable in an encrypted manner.
+Save the pipeline.
+Secret variables are encrypted at rest with a 2048-bit RSA key. Secrets are available on the agent for tasks and scripts to use. 
+
+
+
 3. Terraform scripts updates: terraform.tfvars
     + **terraform/environments/test/terraform.tfvars**
         update informations relative to your Azure account:
@@ -116,10 +164,9 @@ https://dev.azure.com/     using the same Azure account
 # [B] Instructions for Setup Initial Pipeline
 Set up a minimalistic DevOps pipeline to ensure the pipeline is set up correctly, before adding multiple stages to it.
 
-## Pre-requisites for Azure Pipeline: 
+## Prerequisites for Azure Pipeline: 
 + GiHub account: Plugin "Azure Pipeline" is installed and permission is set of our relevant repository.  
-+ Azure account: VM named "myLinuxVM" created  by terraform 
-        (this VM will be configured as an agent for the needs of the Azure pipeline)
+
 + webapplication is up and running # MDE TODO
 
 ## Pipeline configuration
@@ -164,7 +211,8 @@ Set up a minimalistic DevOps pipeline to ensure the pipeline is set up correctly
         Name                :  myAgentPool
         Pipeline permissions:  Grant access permissions to all pipelines
     
-5. Configure the Agent (VM) - Install Docker [Azure Portal, Azure CLI]
+5. Create a new VM manually [Azure Portal]
+6. Configure the Agent (VM) - Install Docker [Azure Portal, Azure CLI]
 
     + Azure Portal: Copy the "Public IP address"
         
@@ -191,7 +239,7 @@ Set up a minimalistic DevOps pipeline to ensure the pipeline is set up correctly
     Do note the new public IP, if it has been changed after the VM restart.
 
 
-6. Configure the Agent (VM) - Install Agent Services  [Azure CLI, Azure DevOps]
+7. Configure the Agent (VM) - Install Agent Services  [Azure CLI, Azure DevOps]
 
     1. Get the commands to execute for installing agent services [Azure DevOps]
         Azure DevOps: 
@@ -291,6 +339,10 @@ Set up a minimalistic DevOps pipeline to ensure the pipeline is set up correctly
         which pylint
 
         ```
+8. Azure DevOps : Install extension for Terraform
+    the top-right menu :   icon  Marketplace >> "Browse marketplace"
+
+
 # [C] Instructions for Preparing a VM image
 
 In this part, we 
@@ -586,3 +638,11 @@ node -v && npm --version
 
 [Capture a VM in the portal](https://learn.microsoft.com/en-us/azure/virtual-machines/capture-image-portal)
 [How to Save JMeter Test Results as CSV and XML Files](https://qaautomation.expert/2025/05/06/how-to-save-jmeter-test-results-as-csv-and-xml-files/)
+
+[Use secure file feature in the pipeline library UI to save the "id_rsa" file](https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops#add-a-secure-file)
+
+[PublishTestResults@2 - Publish Test Results v2 task](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=trx%2Cyaml#yaml-snippet)
+
+[DownloadSecureFile@1 - Download secure file v1 task](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/download-secure-file-v1?view=azure-pipelines&tabs=linux)
+
+[Azure Pipelines task reference](https://learn.microsoft.com/fr-fr/azure/devops/pipelines/tasks/reference/?view=azure-pipelines#what-are-task-input-aliases)

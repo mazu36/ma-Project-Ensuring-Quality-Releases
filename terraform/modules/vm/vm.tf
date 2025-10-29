@@ -20,8 +20,8 @@ resource "azurerm_linux_virtual_machine" "test" {
   network_interface_ids = [ "${azurerm_network_interface.test.id}"]
   admin_ssh_key {
     username   = "admin_user"
-    #public_key = file("~/.ssh/id_rsa.pub")
-    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDtZe0vtxB8TIsHpsHrriLicXU0ukifSVDV/UsK4LvmKz2QdfrZTj2e4Ons0eWLn28kTIVbHEUlT/cwWoyLGo8DSo7uap8bahDP73ac6XtYAZfpoHiyMklQtv9ThiQuZxDBW3UfhQ4Ev88ilg7Ia77poz0j/YTlbEFGkQeVGpG/D/RrRtvmKft6gUpuOmAl+pLwqdH7Y+NVve3BT2CHlbmeKH2iaHYgcdQ+kh3GX345DnGBtDutRSTUpSSGPboTlIbt+tAvj+RokYx66/0fKePiNStoCKWPDBQLawS44Js1pCSgwrvvOQNuTQS3vBS2hhxTTzdJ6UtTuaBMGJEHiTWg/+y9tQfCn2IE53WpYVtDLfAMQWvnZW2OwfI9k7a3xjvxMa8aeoVzub5ubBvMtDGFL6RmNQvtpnh86lOFfIHz9QBAYSsX12jFLRlombMKcyYuUrRe9tbg5MQpt4JPh8SkVRmlGWcL1GiZcS4o2vtHfR0oCVdOEd+dYIMkKL7tl5c= maria@anous-MACHC-WAX9"
+    public_key = file("~/.ssh/id_rsa.pub")
+    #public_key = file("~/Downloads/agent_id_rsa.pub")
   }
   os_disk {
     caching           = "ReadWrite"
