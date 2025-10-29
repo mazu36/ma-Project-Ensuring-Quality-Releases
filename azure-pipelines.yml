@@ -58,12 +58,28 @@ stages:
         sshPublicKey: '$(SSH_PUBLIC_KEY)'            # variable value
         sshKeySecureFile: 'id_rsa' # Use secure file feature in the pipeline library UI to save the "id_rsa" file, as mentioned here: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops#add-a-secure-file
 
+    - bash: |
+        ls -l /home/devopsagent/myagent/_work/_temp/id_rsa
+        find /home/devopsagent -type f -name "id_rsa"
+        find /home/devopsagent -type f -name "*known*"
+        find /home/devopsagent -type f -name "authorized_keys"
+        echo "HOME is $(HOME)"
+        echo "PATH is $(PATH)"
+        echo "USER is $(USER)"
     - task: DownloadSecureFile@1
       name: udacity_public_key
       displayName: mySecureFile
       inputs:
         secureFile: 'id_rsa'
 
+    - bash: |
+        ls -l /home/devopsagent/myagent/_work/_temp/id_rsa
+        find /home/devopsagent -type f -name "id_rsa"
+        find /home/devopsagent -type f -name "*known*"
+        find /home/devopsagent -type f -name "authorized_keys"
+        echo "HOME is $(HOME)"
+        echo "PATH is $(PATH)"
+        echo "USER is $(USER)"
 
     #- script: |
     #    echo Installing $(udacity_public_key.secureFilePath) to the trusted CA directory...
@@ -87,6 +103,16 @@ stages:
 #--------------------------------------------#    
     # Postman - Install Newman    
     # ToDo: Update the command and verify the working directory
+
+    - task: CmdLine@2
+      displayName: Install Node
+      inputs:
+        script: |
+          sudo apt update
+          sudo apt install nodejs
+          sudo apt install npm
+          node -v && npm --version
+        workingDirectory: $(System.DefaultWorkingDirectory)
     - task: CmdLine@2
       displayName: Install Newman
       inputs:
