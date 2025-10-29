@@ -104,15 +104,7 @@ stages:
     # Postman - Install Newman    
     # ToDo: Update the command and verify the working directory
 
-    - task: CmdLine@2
-      displayName: Install Node
-      inputs:
-        script: |
-          sudo apt update
-          sudo apt install -y nodejs
-          sudo apt install -y npm
-          node -v && npm --version
-        workingDirectory: $(System.DefaultWorkingDirectory)
+
     - task: CmdLine@2
       displayName: Install Newman
       inputs:
