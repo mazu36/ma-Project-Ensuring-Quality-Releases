@@ -109,8 +109,8 @@ stages:
       inputs:
         script: |
           sudo apt update
-          sudo apt install nodejs
-          sudo apt install npm
+          sudo apt install -y nodejs
+          sudo apt install -y npm
           node -v && npm --version
         workingDirectory: $(System.DefaultWorkingDirectory)
     - task: CmdLine@2
