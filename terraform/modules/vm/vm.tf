@@ -44,5 +44,6 @@ resource "azurerm_linux_virtual_machine" "test" {
   #   version   = "latest"
   # }
 
-  source_image_id = data.azurerm_shared_image.test.id
+  #source_image_id = data.azurerm_shared_image.test.id
+  source_image_id ="https://portal.azure.com/#@udacityhol.onmicrosoft.com/resource/subscriptions/80ae9245-22ea-4f16-a42f-d5cebd7aac99/resourcegroups/azuredevops/providers/microsoft.compute/galleries/testgallery/images/testimagevm/versions/0.0.1/properties"
 }
