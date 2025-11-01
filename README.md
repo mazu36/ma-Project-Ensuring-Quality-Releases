@@ -397,7 +397,7 @@ Archiving a web package in the pipeline requires the configure a target environm
     VM name: linux-test
 2. Azure DevOps: Configure the Test Linux VM 
     <project> >> "Project settings" >> Environment >> "Create environment"
-        Name: test-vm
+        Name: testLinuxVM
         Description:
         Resource: None/Kubernetes/VM 
         ==>  choose VM
@@ -492,12 +492,7 @@ Replace the APPSERVICEURL with the URL of your AppService once it's deployed.
 
 Later in the project, the /automatedtesting/jmeter/ folder will contain the Endurance, Performance, and Stress test suites.
 
-Postman
-Install Postman(opens in a new tab).
 
-To verify the Postman, import the automatedtesting/postman/StarterAPIs.json collection into Postman.
-
-Later in the project, the /automatedtesting/postman/ folder will contain the Data validation and Regression test suites.
 
 ZZZZ
 
@@ -663,3 +658,4 @@ TestSuite.Regression.json
 
 [Azure Pipelines task reference](https://learn.microsoft.com/fr-fr/azure/devops/pipelines/tasks/reference/?view=azure-pipelines#what-are-task-input-aliases)
 [Installing Node.js with Apt Using a NodeSource PPA](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-22-04)
+[Deploy Azure VM based on customize Image available on Shared Image Gallery](https://stackoverflow.com/questions/67178590/deploy-azure-vm-based-on-customize-image-available-on-shared-image-gallery)

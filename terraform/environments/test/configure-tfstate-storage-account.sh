@@ -3,6 +3,7 @@ RESOURCE_GROUP_NAME="Azuredevops"
 STORAGE_ACCOUNT_NAME="tfstate$RANDOM$RANDOM"
 CONTAINER_NAME="tfstate"
 
+echo "STORAGE_ACCOUNT_NAME=$STORAGE_ACCOUNT_NAME"
 # This command is not needed in the Udacity provided Azure account. 
 # Create resource group
 # az group create --name $RESOURCE_GROUP_NAME --location eastus
