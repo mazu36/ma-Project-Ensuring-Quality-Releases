@@ -2,7 +2,15 @@ data "azurerm_shared_image" "test" {
   name                = "testImageVM"
   gallery_name        = "testGallery"
   resource_group_name = "Azuredevops"
-  version    = "0.0.1"
+  location    = "France Central"
+  os_type             = "Linux"
+
+  identifier {
+    publisher = "canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts-gen2"
+  }
+
   #/subscriptions/80ae9245-22ea-4f16-a42f-d5cebd7aac99/resourcegroups/azuredevops/providers/microsoft.compute/galleries/testgallery/images/testimagevm/versions/0.0.1
 }
 
