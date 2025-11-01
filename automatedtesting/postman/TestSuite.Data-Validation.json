@@ -1,0 +1,316 @@
+{
+	"info": {
+		"_postman_id": "c2137c79-1d84-4cc3-90bb-cca921d02fb3",
+		"name": "Integration MDE",
+		"description": "# About this collection\n\nPostman allows you to test your APIs using simple Javascript code. You can evaluate your response body, headers, cookies, and more using the [ChaiJS BDD](https://www.chaijs.com/api/bdd/) syntax.\n\nThis collection guides you through the process of setting up an integration test to ensure that all individual components of an API function together seamlessly.\n\nThe API under test in this collection includes the endpoints for creating a new author, getting it, update it and delete it.\n\n**Collection variables:**\n\n**baseAuthorsUrl:** [https://fakerestapi.azurewebsites.net/api/v1/Authors](https://fakerestapi.azurewebsites.net/api/v1/Authors)\n\n- POST New Author {{baseAuthorsUrl}}\n    \n- POST New Author {{baseAuthorsUrl}}/{{new_author_id}}\n    \n- PUT New Author {{baseAuthorsUrl}}/{{new_author_id}}\n    \n- GET New Author after PUT {{baseAuthorsUrl}}/{{new_author_id}}\n    \n- DEL New Author {{baseAuthorsUrl}}/{{new_author_id}}\n    \n\nBy setting up requests in the order of the operation, we can test the flow of data to and from the endpoints and ensure they work together as expected. We also verify that the data persists between requests on the back end.\n\n## **Using this collection**\n\n**Step 1:** Check out the requests' documentation to learn more about -\n\n- what each request is meant to do.\n    \n- the tests we've added against each one.\n    \n\n**Step 2:** Run this collection by clicking on \"Run\".\n\n<img src=\"https://content.pstmn.io/84019b0f-69c8-4c5f-98b9-2c90a6f9a0b1/Y29sbGVjdGlvbi1ydW5uZXItYnV0dG9uLmpwZWc=\" width=\"266\" height=\"103\">\n\n**Step 3:** To customize this collection, replace the request URLs with your API endpoints and add or edit the tests if needed.\n\n## Resources\n\n[Scripting in Postman](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/)\n\n[Test script examples](https://learning.postman.com/docs/writing-scripts/script-references/test-examples/)\n\n[Postman Sandbox API reference](https://learning.postman.com/docs/sending-requests/grpc/postman-sandbox-api/#writing-assertions)\n\n[Using the Collection Runner](https://learning.postman.com/docs/collections/running-collections/intro-to-collection-runs/)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48318753",
+		"_collection_link": "https://made78-8520851.postman.co/workspace/Maria-Dejoie's-Workspace~41977823-7be0-468a-81c4-d7d4a169bf74/collection/48318753-c2137c79-1d84-4cc3-90bb-cca921d02fb3?action=share&source=collection_link&creator=48318753"
+	},
+	"item": [
+		{
+			"name": "New Author",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const getData = () => pm.response.json();  ",
+							"// clear collection variable",
+							"pm.collectionVariables.unset(\"new_author_id\");",
+							"",
+							"pm.test(\"Returns an author object\", () => {",
+							"    const data = getData();",
+							"",
+							"    // Check the expected properties exist",
+							"    pm.expect(data).to.have.property(\"id\");",
+							"    pm.expect(data).to.have.property(\"idBook\");",
+							"    pm.expect(data).to.have.property(\"firstName\");",
+							"    pm.expect(data).to.have.property(\"lastName\");",
+							"",
+							"    // Check the values have the expected types",
+							"    pm.expect(data.id).to.be.a('number');",
+							"    pm.expect(data.idBook).to.be.a('number');",
+							"    pm.expect(data.firstName).to.be.a('string');",
+							"    pm.expect(data.lastName).to.be.a('string');",
+							"});",
+							"",
+							"pm.test(\"Return correct details for a new author 'Henri Harari' author\", () => {",
+							"    const data = getData();",
+							"",
+							"    // Check expected values are present",
+							"    pm.expect(data.id).to.equal(300);",
+							"    pm.expect(data.idBook).to.equal(2);",
+							"    pm.expect(data.firstName).to.equal(\"Henri\");",
+							"    pm.expect(data.lastName).to.equal(\"HARARI\");",
+							"});",
+							"",
+							"// Store the new author id for future use in other tests.",
+							"pm.collectionVariables.set(\"new_author_id\", getData().id);",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 300,\n    \"idBook\": 2,\n    \"firstName\": \"Henri\",\n    \"lastName\": \"HARARI\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseAuthorsUrl}}/",
+					"host": [
+						"{{baseAuthorsUrl}}"
+					],
+					"path": [
+						""
+					]
+				},
+				"description": "This request uses tests  to verify both the structure (existence and type of individual properties) and exact values of the response data.\n\nUse `pm.expect(subject)` to wrap test subjects, and [Chai](https://www.chaijs.com/api/bdd/) for assertions."
+			},
+			"response": []
+		},
+		{
+			"name": "New Author",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const getData = () => pm.response.json();  ",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Return correct id for new_author_id\", () => {",
+							"    const data = getData();",
+							"",
+							"    // Check expected values are present",
+							"    pm.expect(data.id).to.equal(300);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"idBook\");",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseAuthorsUrl}}/{{new_author_id}}",
+					"host": [
+						"{{baseAuthorsUrl}}"
+					],
+					"path": [
+						"{{new_author_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Author",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const getData = () => pm.response.json(); //.data;",
+							"",
+							"pm.test(\"Returns an author object\", () => {",
+							"    const data = getData();",
+							"",
+							"    // Check the expected properties exist",
+							"    pm.expect(data).to.have.property(\"id\");",
+							"    pm.expect(data).to.have.property(\"idBook\");",
+							"    pm.expect(data).to.have.property(\"firstName\");",
+							"    pm.expect(data).to.have.property(\"lastName\");",
+							"",
+							"    // Check the values have the expected types",
+							"    pm.expect(data.id).to.be.a('number');",
+							"    pm.expect(data.idBook).to.be.a('number');",
+							"    pm.expect(data.firstName).to.be.a('string');",
+							"    pm.expect(data.lastName).to.be.a('string');",
+							"});",
+							"",
+							"pm.test(\"Return correct details for 'Henri Harari' author\", () => {",
+							"    const data = getData();",
+							"",
+							"    // Check expected values are present",
+							"    pm.expect(data.id).to.equal(300);",
+							"    pm.expect(data.idBook).to.equal(2);",
+							"    pm.expect(data.firstName).to.equal(\"Paul\");",
+							"    pm.expect(data.lastName).to.equal(\"HARARI\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": {{new_author_id}},\n    \"idBook\": 2,\n    \"firstName\": \"Paul\",\n    \"lastName\": \"HARARI\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseAuthorsUrl}}/{{new_author_id}}",
+					"host": [
+						"{{baseAuthorsUrl}}"
+					],
+					"path": [
+						"{{new_author_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Author after PUT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const getData = () => pm.response.json();  ",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Return correct id for new_author_id\", () => {",
+							"    const data = getData();",
+							"",
+							"    // Check expected values are present",
+							"    pm.expect(data.id).to.equal(300);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"idBook\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseAuthorsUrl}}/{{new_author_id}}",
+					"host": [
+						"{{baseAuthorsUrl}}"
+					],
+					"path": [
+						"{{new_author_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Author",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const getData = () => pm.response.json();  ",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Check if data exists\", function () {",
+							"    pm.expect(getData.data, \"data should not exist\").to.be.undefined;",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseAuthorsUrl}}/{{new_author_id}}",
+					"host": [
+						"{{baseAuthorsUrl}}"
+					],
+					"path": [
+						"{{new_author_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseAuthorsUrl",
+			"value": "https://fakerestapi.azurewebsites.net/api/v1/Authors"
+		},
+		{
+			"key": "baseBooksUrl",
+			"value": "https://fakerestapi.azurewebsites.net/api/v1/Books"
+		},
+		{
+			"key": "new_author_id",
+			"value": ""
+		}
+	]
+}
