@@ -1,6 +1,6 @@
 data "azurerm_shared_image" "test" {
-  name                = "myTestImage3"
-  gallery_name        = "testGallery3"
+  name                = "myTestImage4"
+  gallery_name        = "testGallery4"
   resource_group_name = "Azuredevops"
 }
 
