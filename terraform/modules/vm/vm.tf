@@ -34,6 +34,7 @@ resource "azurerm_linux_virtual_machine" "test" {
   os_disk {
     caching           = "ReadWrite"
     storage_account_type = "Standard_LRS"
+    security_encryption_type = "VMGuestStateOnly" // if using with encryption_at_host_enabled set to true
   }
   # source_image_reference {
   #   publisher = "Canonical"
@@ -43,4 +44,7 @@ resource "azurerm_linux_virtual_machine" "test" {
   # }
 
   source_image_id = data.azurerm_shared_image.test.id
+
+  secure_boot_enabled = true
+  vtpm_enabled = true 
 }
