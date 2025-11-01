@@ -2,6 +2,8 @@ data "azurerm_shared_image" "test" {
   name                = "testImageVM"
   gallery_name        = "testGallery"
   resource_group_name = "Azuredevops"
+  version    = "0.0.1"
+  #/subscriptions/80ae9245-22ea-4f16-a42f-d5cebd7aac99/resourcegroups/azuredevops/providers/microsoft.compute/galleries/testgallery/images/testimagevm/versions/0.0.1
 }
 
 
