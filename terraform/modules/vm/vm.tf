@@ -1,7 +1,7 @@
 data "azurerm_shared_image" "test" {
   name                = "testImageVM"
   gallery_name        = "testGallery"
-  resource_group_name = Azuredevops"
+  resource_group_name = "Azuredevops"
 }
 
 
