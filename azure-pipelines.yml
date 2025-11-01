@@ -51,38 +51,38 @@ stages:
     # Generate an SSH key pair in your local/AZ Cloud shell. 
     # Use the public key in the Terraform VM module. 
     # Install public key and private key file to the pipeline agent, using the task below. 
-    # ToDo: Change the inputs value below
-    - task: InstallSSHKey@0
-      inputs:
-        knownHostsEntry: '$(KNOWN_HOSTS_STRING)' # variable value  # MDE TODO
-        sshPublicKey: '$(SSH_PUBLIC_KEY)'            # variable value
-        sshKeySecureFile: 'id_rsa' # Use secure file feature in the pipeline library UI to save the "id_rsa" file, as mentioned here: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops#add-a-secure-file
-
-    - bash: |
-        ls -l /home/devopsagent/myagent/_work/_temp/id_rsa
-        find /home/devopsagent -type f -name "id_rsa"
-        find /home/devopsagent -type f -name "*known*"
-        find /home/devopsagent -type f -name "authorized_keys"
-        echo "HOME is $(HOME)"
-        echo "PATH is $(PATH)"
-        echo "USER is $(USER)"
-    - task: DownloadSecureFile@1
-      name: udacity_public_key
-      displayName: mySecureFile
-      inputs:
-        secureFile: 'id_rsa'
-
-    - bash: |
-        ls -l /home/devopsagent/myagent/_work/_temp/id_rsa
-        find /home/devopsagent -type f -name "id_rsa"
-        find /home/devopsagent -type f -name "*known*"
-        find /home/devopsagent -type f -name "authorized_keys"
-        echo "HOME is $(HOME)"
-        echo "PATH is $(PATH)"
-        echo "USER is $(USER)"
-
-    #- script: |
-    #    echo Installing $(udacity_public_key.secureFilePath) to the trusted CA directory...
+    # # ToDo: Change the inputs value below
+    # - task: InstallSSHKey@0
+    #   inputs:
+    #     knownHostsEntry: '$(KNOWN_HOSTS_STRING)' # variable value  # MDE TODO
+    #     sshPublicKey: '$(SSH_PUBLIC_KEY)'            # variable value
+    #     sshKeySecureFile: 'id_rsa' # Use secure file feature in the pipeline library UI to save the "id_rsa" file, as mentioned here: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops#add-a-secure-file
+    # 
+    # - bash: |
+    #     ls -l /home/devopsagent/myagent/_work/_temp/id_rsa
+    #     find /home/devopsagent -type f -name "id_rsa"
+    #     find /home/devopsagent -type f -name "*known*"
+    #     find /home/devopsagent -type f -name "authorized_keys"
+    #     echo "HOME is $(HOME)"
+    #     echo "PATH is $(PATH)"
+    #     echo "USER is $(USER)"
+    # - task: DownloadSecureFile@1
+    #   name: udacity_public_key
+    #   displayName: mySecureFile
+    #   inputs:
+    #     secureFile: 'id_rsa'
+    # 
+    # - bash: |
+    #     ls -l /home/devopsagent/myagent/_work/_temp/id_rsa
+    #     find /home/devopsagent -type f -name "id_rsa"
+    #     find /home/devopsagent -type f -name "*known*"
+    #     find /home/devopsagent -type f -name "authorized_keys"
+    #     echo "HOME is $(HOME)"
+    #     echo "PATH is $(PATH)"
+    #     echo "USER is $(USER)"
+    # 
+    # #- script: |
+    # #    echo Installing $(udacity_public_key.secureFilePath) to the trusted CA directory...
     #    sudo chown root:root $(udacity_public_key.secureFilePath)
     #    sudo chmod a+r $(udacity_public_key.secureFilePath)
     #    sudo ln -s $(udacity_public_key.secureFilePath) /home/$(userAgent)/Downloads/
