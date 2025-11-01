@@ -339,6 +339,38 @@ Set up a minimalistic DevOps pipeline to ensure the pipeline is set up correctly
         which pylint
 
         ```
+    5 Install Node
+    ```
+        # To install a different version of Node.js, 
+        # you can use a **PPA (personal package archive)** maintained by NodeSource. 
+        # install the PPA in order to get access to its packages
+        cd ~
+        curl -sL https://deb.nodesource.com/setup_20.x -o nodesource_setup.sh
+
+        # verify nodesource_setup.sh content
+        vi nodesource_setup.sh
+
+        #  If you are satisfied that the script is safe to run, exit your editor, then run the script with sudo.
+        # The PPA will be added to your configuration and your local package cache will be updated automatically.
+        sudo bash nodesource_setup.sh
+
+        # remove existing node installation
+        sudo apt remove nodejs npm
+
+        #  You can now install the Node.js package 
+        sudo apt install nodejs
+
+        # Verify that you’ve installed the new version by running node with the -v version flag:
+        node -v
+
+        # The NodeSource nodejs package contains both the node binary and npm, so you don’t need to install npm separately.
+        # At this point you have successfully installed Node.js and npm using apt and the NodeSource PPA.
+
+        node -v && npm --version
+        # v20.19.5
+        # 10.8.2
+```
+
 8. Azure DevOps : Install extension for Terraform
     the top-right menu :   icon  Marketplace >> "Browse marketplace"
 
@@ -596,6 +628,7 @@ Use Newman to run and test collections from the command line instead of in the P
             >> More >> Export >> "Export JSON" 
             >> "Choose location <your repo>/automatedtesting/postman/" 
             >> "Save"
+
 11. Install newman 
     `sudo npm install -g newman`
 12. Run exported collections using newman CLI
@@ -611,24 +644,7 @@ TestSuite.Data-Validation.json
 TestSuite.Regression.json
 
 
-# Install Node & Newman
 
-```
-## Install Node
-sudo apt update
-
-# Installez maintenant l’environnement d’exécution avec le code suivant :
-sudo apt install nodejs
- 
-# Node.js utilise le gestionnaire de paquets npm. Vous l’installez avec ce code :
-sudo apt install npm
- 
-# Pour finir, vérifiez si votre version de Node.js est bien à jour :
-node -v && npm --version
-
-
-# Json with postman collection
-/home/maria/Postman/postman_export/Integration MDE.postman_collection_v3.json
 
 
 
@@ -646,3 +662,4 @@ node -v && npm --version
 [DownloadSecureFile@1 - Download secure file v1 task](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/download-secure-file-v1?view=azure-pipelines&tabs=linux)
 
 [Azure Pipelines task reference](https://learn.microsoft.com/fr-fr/azure/devops/pipelines/tasks/reference/?view=azure-pipelines#what-are-task-input-aliases)
+[Installing Node.js with Apt Using a NodeSource PPA](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-22-04)
