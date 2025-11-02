@@ -45,131 +45,14 @@ https://portal.azure.com/  using the Azure credentials provided by the Udacity c
 https://dev.azure.com/     using the same Azure account
 
 
-# [A] Instructions for Setting environment by Terraform
+# -------------------------------------------------------
+# Part 1 : DevOps Project Configuration
+# -------------------------------------------------------
+Create a DevOps project
+    Resources in Azure DevOps: PAT Personal Access Token, Service conection, Agent Pool, Agent
+    Resources in Azure Portal: Create manually a VM, configure it for agent service and all packages needed by your pipeline
 
 
-1. Fork [the Starter repository](https://github.com/udacity/cd1807-Project-Ensuring-Quality-Releases)
-2. Clone the forked repository into your local environment.
-3. Generate an SSH key pair in your local/AZ Cloud shell. 
-4. Put ssh keys into Azure DevOps Library
-    [Use secure file feature in the pipeline library UI to save the "id_rsa" file](https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops#add-a-secure-file)
-    1. Upload a secure file
-        Azure DevOps: <project> / "Project Settings" >> Pipelines >> Library >> "Secure Files"
-        ==> upload a file
-        ==> "OK"
-    2. Set permissions for a secure file
-        Azure DevOps: <project> / "Project Settings" >> Pipelines >> Library >> "Security"
-        select <secure file> 
-            => Security / "Pipeline permissions" / "Approvals and checks"
-        Security            : to set users and security roles that can access the file
-        Pipeline permissions: to select YAML pipelines that can access the file
-        Approvals and checks: to set approvers and other checks for using the file
-42. 
-
-+ Secret variable
-+ Secure File
-
-We recommend that you don't pass in your public key as plain text to the task configuration. 
-Instead, set a **secret variable** in your pipeline for the contents of your mykey.pub file. 
-
-To set secrets in the web interface, follow these steps:
-
-Go to the Pipelines page, select the appropriate pipeline, and then select Edit.
-Locate the Variables for this pipeline.
-Add or update the variable.
-Select the option to Keep this value secret to store the variable in an encrypted manner.
-Save the pipeline.
-
-
-Then, call the variable in your pipeline definition as $(myPubKey). 
-For the secret part of your key, use the **Secure File library** in Azure Pipelines.
-
-
-### Secret variable in the UI
-To set secrets in the web interface, follow these steps:
-
-Go to the Pipelines page, select the appropriate pipeline, and then select Edit.
-Locate the Variables for this pipeline.
-Add or update the variable.
-Select the option to **Keep this value secret** to store the variable in an encrypted manner.
-Save the pipeline.
-Secret variables are encrypted at rest with a 2048-bit RSA key. Secrets are available on the agent for tasks and scripts to use. 
-
-
-
-3. Terraform scripts updates: terraform.tfvars
-    + **terraform/environments/test/terraform.tfvars**
-        update informations relative to your Azure account:
-        service principal, subscription informations, etc
-
-        subscription_id =  
-        client_id = 
-        client_secret =  
-        tenant_id =  
-
-        location =  
-        resource_group_name = "Azuredevops"
-        application_type =  
-4. Terraform state backend
-    Configure the Storage Account and State Backend
-    + launch the script to create a storage account for terraform tfstate
-        **terraform/environments/test/configure-tfstate-storage-account.sh**
-     + update informations for terraform backend  
-        (use informations provided by configure-tfstate-storage-account.sh)
-        **terraform/environments/test/main.tf**
-         terraform {
-            backend "azurerm" {
-                storage_account_name =  
-                container_name       =  
-                key                  =  
-                access_key           =  
-            }
-            ...
-         }
-5. Terraform modules vm updates
-    1. terraform/modules/vm/input.tf
-    2. terraform/modules/vm/vm.tf
-    3. Configuration to permit SSH log into VM 
-        (connection SSH needed to be able to connect to VM and execute selenium UI tests)
-        Either configure admin_user/admin_password in vm.tf
-        either connfigure admin_ssh_key:
-        1. Generate SSH key-pair: `ssh-keygen -t rsa`
-        2. Update resource linux VM admin_ssh_key configuration
-            either you use a reference for public key
-                admin_ssh_key {
-                    username   = "admin_user"
-                    public_key =  "file("~/.ssh/id_rsa.pub")"
-                }
-            either you use the content for public key: `cat ~/.ssh/id_rsa.pub`
-                admin_ssh_key {
-                    username   = "admin_user"
-                    public_key =  "<content public key>"
-                }
-6. Ensure the variables are correctly set in the terraform files
-    Verify whether the variables in input.tf has values attributed (example: resource_group variable)
-7. Launch terraform
-    ```
-    cd <path>.../terraform/environments/test  # go into test folder
-    terraform init
-    terraform show
-    terraform plan
-    terraform apply
-    ```
-    Verify the resources created using Azure Portal
-    Where you finished your tests, destroy the resources:
-    ```
-    terraform destroy
-    ```
-
-# [B] Instructions for Setup Initial Pipeline
-Set up a minimalistic DevOps pipeline to ensure the pipeline is set up correctly, before adding multiple stages to it.
-
-## Prerequisites for Azure Pipeline: 
-+ GiHub account: Plugin "Azure Pipeline" is installed and permission is set of our relevant repository.  
-
-+ webapplication is up and running # MDE TODO
-
-## Pipeline configuration
 1. Azure DevOps: Create PAT Personal Access Token 
     the top-right user icon "**User settings**" / "Personal access tokens"
             Name : "myPAT"
@@ -297,10 +180,10 @@ Set up a minimalistic DevOps pipeline to ensure the pipeline is set up correctly
         For our Flask application, we install the packages below:
 
         ```
-        sudo apt-get update
-        sudo apt update
-        sudo apt install software-properties-common
-        sudo add-apt-repository ppa:deadsnakes/ppa
+        sudo apt-get update -y
+        sudo apt update -y
+        sudo apt install software-properties-common -y
+        sudo add-apt-repository ppa:deadsnakes/ppa -y
 
         # Check if the VM has Python installed already. Otherwise, use these commands to install Python 3.7
 
@@ -312,9 +195,9 @@ Set up a minimalistic DevOps pipeline to ensure the pipeline is set up correctly
 
         # Check if the VM has Python installed already. Otherwise, use these commands to install Python 3.9
 
-        sudo apt install python3.9
-        sudo apt-get install python3.9-venv
-        sudo apt-get install python3-pip
+        sudo apt install python3.9 -y
+        sudo apt-get install python3.9-venv -y
+        sudo apt-get install python3-pip -y
         python3.9 --version
         # Python 3.9.24
         pip --version 
@@ -322,9 +205,9 @@ Set up a minimalistic DevOps pipeline to ensure the pipeline is set up correctly
 
         # Install tools for the Pipeline build steps.
 
-        #sudo apt-get install python3.7-distutils
-        sudo apt-get install python3.9-distutils
-        sudo apt-get -y install zip
+        #sudo apt-get install python3.7-distutils -y
+        sudo apt-get install python3.9-distutils -y
+        sudo apt-get -y install zip -y
 
         # In addition, pylint is know to need an additional step, 
         as mentioned in this [stackoverflow thread](https://stackoverflow.com/questions/48015106/pip-installed-pylint-cannot-be-found):
@@ -369,10 +252,15 @@ Set up a minimalistic DevOps pipeline to ensure the pipeline is set up correctly
         node -v && npm --version
         # v20.19.5
         # 10.8.2
-```
+    ```
 
-8. Azure DevOps : Install extension for Terraform
-    the top-right menu :   icon  Marketplace >> "Browse marketplace"
+
+
+# -------------------------------------------------------
+# Part 2 : Create an environmnent for deployment 
+# -------------------------------------------------------
+#   Resources in Azure DevOps: Environment with OS Linux 
+#   Resources in Azure Portal: Create manually a VM, configure it for environment deployment, create an image from it
 
 
 # [C] Instructions for Preparing a VM image
@@ -394,10 +282,10 @@ Archiving a web package in the pipeline requires the configure a target environm
 
 
 1. Azure Portal: Create manually a new Linux VM 
-    VM name: linux-test
+    VM name: testLinuxVM
 2. Azure DevOps: Configure the Test Linux VM 
     <project> >> "Project settings" >> Environment >> "Create environment"
-        Name: testLinuxVM
+        Environment Name: test-vm
         Description:
         Resource: None/Kubernetes/VM 
         ==>  choose VM
@@ -420,29 +308,152 @@ Archiving a web package in the pipeline requires the configure a target environm
             3. Azure Devops: verify whether this registered VM is available as an environment resource
                 <project> >> "Project settings" >> Environment >> <our_registered_vm>
 3. Azure Portal: Create an image of a VM  
-    Virtual machines >> <your-vm> >> Capture (in the top menu)
+    Virtual machines >> <your-vm> >> Capture (in the top menu) / Image
 
     We can then use this custom image of the VM in the terraform vm.tf script.
+    Create Image
+        Image name: testGallery
+        Share Image in Azure Compute Gallery
+        Gallery: 
+            Gllery name: testGallery
+            OS status: Generalized
+            Definition name: testGalleryDef
+                Editor: canonical
+                Offre: 0001-com-ubuntu-server-jammy
+                Refeence SKU: 22_04-lts-gen2
+                Version number: 0.0.1
 
-4. terraform: azurerm_linux_virtual_machine :
-source_image_id 
-    The ID of the Image which this Virtual Machine should be created from. 
-    Possible Image ID types include Image IDs, Shared Image IDs, Shared Image Version IDs, Community Gallery Image IDs, Community Gallery Image Version IDs, Shared Gallery Image IDs and Shared Gallery Image Version IDs.
 
-    One of either source_image_id or source_image_reference must be set.
-    ==> remove source_image_reference
-    ==> add source_image_id
+# -------------------------------------------------------
+# Part 3:  Terraform scripts :Infrastructure as Code
+# -------------------------------------------------------
 
-5. azure-pipelines.yml: 
-    ## Environment name
-    environmentName: 'test-vm'
+1. Fork [the Starter repository](https://github.com/udacity/cd1807-Project-Ensuring-Quality-Releases)
+2. Clone the forked repository into your local environment.
+3. Generate an SSH key pair in your local/AZ Cloud shell. 
+4. Put ssh keys into Azure DevOps Library
+    [Use secure file feature in the pipeline library UI to save the "id_rsa" file](https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops#add-a-secure-file)
+    1. Upload a secure file
+        Azure DevOps: <project> / "Project Settings" >> Pipelines >> Library >> "Secure Files"
+        ==> upload a file
+        ==> "OK"
+    2. Set permissions for a secure file
+        Azure DevOps: <project> / "Project Settings" >> Pipelines >> Library >> "Security"
+        select <secure file> 
+            => Security / "Pipeline permissions" / "Approvals and checks"
+        Security            : to set users and security roles that can access the file
+        Pipeline permissions: to select YAML pipelines that can access the file
+        Approvals and checks: to set approvers and other checks for using the file
+42. 
 
-    stage deploy:
-    environment: "$(environmentName)"
++ Secret variable
++ Secure File
 
-# [D] Instructions for Setup Final Pipeline
+We recommend that you don't pass in your public key as plain text to the task configuration. 
+Instead, set a **secret variable** in your pipeline for the contents of your mykey.pub file. 
 
-7.   Create an azure-pipelines.yml config file [Azure Devops, GitHub]
+To set secrets in the web interface, follow these steps:
+
+Go to the Pipelines page, select the appropriate pipeline, and then select Edit.
+Locate the Variables for this pipeline.
+Add or update the variable.
+Select the option to Keep this value secret to store the variable in an encrypted manner.
+Save the pipeline.
+
+
+Then, call the variable in your pipeline definition as $(myPubKey). 
+For the secret part of your key, use the **Secure File library** in Azure Pipelines.
+
+
+### Secret variable in the UI
+To set secrets in the web interface, follow these steps:
+
+Go to the Pipelines page, select the appropriate pipeline, and then select Edit.
+Locate the Variables for this pipeline.
+Add or update the variable.
+Select the option to **Keep this value secret** to store the variable in an encrypted manner.
+Save the pipeline.
+Secret variables are encrypted at rest with a 2048-bit RSA key. Secrets are available on the agent for tasks and scripts to use. 
+
+
+
+3. Terraform scripts updates: terraform.tfvars
+    + **terraform/environments/test/terraform.tfvars**
+        update informations relative to your Azure account:
+        service principal, subscription informations, etc
+
+        subscription_id =  
+        client_id = 
+        client_secret =  
+        tenant_id =  
+
+        location =  
+        resource_group_name = "Azuredevops"
+        application_type =  
+4. Terraform state backend
+    Configure the Storage Account and State Backend
+    + launch the script to create a storage account for terraform tfstate
+        **terraform/environments/test/configure-tfstate-storage-account.sh**
+     + update informations for terraform backend  
+        (use informations provided by configure-tfstate-storage-account.sh)
+        **terraform/environments/test/main.tf**
+         terraform {
+            backend "azurerm" {
+                storage_account_name =  
+                container_name       =  
+                key                  =  
+                access_key           =  
+            }
+            ...
+         }
+5. Terraform modules vm updates
+    1. terraform/modules/vm/input.tf
+    2. terraform/modules/vm/vm.tf
+    3. Configuration to permit SSH log into VM 
+        (connection SSH needed to be able to connect to VM and execute selenium UI tests)
+        Either configure admin_user/admin_password in vm.tf
+        either connfigure admin_ssh_key:
+        1. Generate SSH key-pair: `ssh-keygen -t rsa` # TOCONFIRM whether put pem key
+        2. Update resource linux VM admin_ssh_key configuration
+            either you use a reference for public key
+                admin_ssh_key {
+                    username   = "admin_user"
+                    public_key =  "file("~/.ssh/id_rsa.pub")"
+                }
+            either you use the content for public key: `cat ~/.ssh/id_rsa.pub`
+                admin_ssh_key {
+                    username   = "admin_user"
+                    public_key =  "<content public key>"
+                }
+6. Ensure the variables are correctly set in the terraform files
+    Verify whether the variables in input.tf has values attributed (example: resource_group variable)
+7. Launch terraform
+    ```
+    cd <path>.../terraform/environments/test  # go into test folder
+    terraform init
+    terraform show
+    terraform plan
+    terraform apply
+    ```
+    Verify the resources created using Azure Portal
+    Where you finished your tests, destroy the resources:
+    ```
+    terraform destroy
+    ```
+
+# -------------------------------------------------------
+# Part 4 : Pipeline configuration
+# -------------------------------------------------------
+
+
+## Prerequisites for Azure Pipeline: 
++ GiHub account: Plugin "Azure Pipeline" is installed and permission is set of our relevant repository.  
+
++ Azure DevOps : Install extension for Terraform
+    the top-right menu :   icon  Marketplace >> "Browse marketplace"
+
+
+1.   Create an azure-pipelines.yml config file [Azure Devops, GitHub]
     + Azure Devops <project>/Pipelines/ "Create Pipeline"
             Connect - Github 
             Select  - Select the Github repository containing your application code.
@@ -458,7 +469,7 @@ source_image_id
 
 
 
-8. Run the pipeline [Azure devOps]
+2. Run the pipeline [Azure devOps]
     + In the pipeline YAML editor: 
         Set/verify the specific values for the 3 parameters of your pipeline:
         pool: myAgentPool
