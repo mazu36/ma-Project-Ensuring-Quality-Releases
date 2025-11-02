@@ -245,6 +245,9 @@ stages:
               appType: webApp
               #package: $(Pipeline.Workspace)/<artifact>/<archiveFile>       # ToDo: Use the published zip artifact. 
               package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
+
+
+            
           #--------------------------------------------#    
           # Run JMeter test suite against the App Service
           - task: CmdLine@2
@@ -260,7 +263,7 @@ stages:
                 pwd
                 ls -la
               #workingDirectory: $(Pipeline.Workspace)/<artifact>            # ToDo: Use the artifact name from the task above
-              workingDirectory: $(Pipeline.Workspace)/drop-perftests/$(Build.BuildId)-perftests.zip
+              workingDirectory: $(Pipeline.Workspace)/drop-perftests/ #$(Build.BuildId)-perftests.zip
               
   #--------------------------------------------#  
   # Selenium | Functional UI Tests
@@ -270,7 +273,7 @@ stages:
     environment:
       name:  "$(environmentName)"       # ToDo: Change/provide a name
       resourceType: VirtualMachine
-      tags: selenium
+      #tags: selenium  #MDE
     strategy:
       runOnce:
         deploy:
