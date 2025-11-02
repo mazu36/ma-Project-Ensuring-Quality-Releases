@@ -263,7 +263,7 @@ stages:
                 pwd
                 ls -la
               #workingDirectory: $(Pipeline.Workspace)/<artifact>            # ToDo: Use the artifact name from the task above
-              workingDirectory: $(Pipeline.Workspace)/drop-perftests/ #$(Build.BuildId)-perftests.zip
+              workingDirectory: $(Pipeline.Workspace)/drop-perftests/
               
   #--------------------------------------------#  
   # Selenium | Functional UI Tests
@@ -279,7 +279,7 @@ stages:
         deploy:
           steps:
           - download: current
-            artifact: drop-ui-tests     # ToDo: Change/provide a name
+            artifact: drop-uitests     # ToDo: Change/provide a name
             
           - task: Bash@3
             inputs:
