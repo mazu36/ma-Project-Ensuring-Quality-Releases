@@ -231,6 +231,7 @@ stages:
   - deployment: FakeRestAPI
     pool:
       vmImage: 'Ubuntu-22.04'      # MDE 'Ubuntu-18.04'
+      name: myAgentPool  # MDE Confirm
     environment: "$(environmentName)" # MDE <environment name>   # ToDo
     strategy:
       runOnce:
