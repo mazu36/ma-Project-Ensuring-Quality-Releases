@@ -244,7 +244,7 @@ stages:
               appName: $(webAppName)          # '' ToDo MDE 
               appType: webApp
               #package: $(Pipeline.Workspace)/<artifact>/<archiveFile>       # ToDo: Use the published zip artifact. 
-              package: $(Pipeline.Workspace)/drop_fakerestapi/$(Build.BuildId)-fakerestapi.zip #MDE
+              package: $(Pipeline.Workspace)/drop_fakerestapi/$(Build.BuildId)-fakerestapi.zip
           #--------------------------------------------#    
           # Run JMeter test suite against the App Service
           - task: CmdLine@2
@@ -258,7 +258,7 @@ stages:
                 grep -ni summary jmeter.log
                 grep -ni starting jmeter.log
               #workingDirectory: $(Pipeline.Workspace)/<artifact>            # ToDo: Use the artifact name from the task above
-              package: $(Pipeline.Workspace)/drop-perftests/$(Build.BuildId)-perftests.zip #MDE
+              workingDirectory: $(Pipeline.Workspace)/drop-perftests/$(Build.BuildId)-perftests.zip
               
   #--------------------------------------------#  
   # Selenium | Functional UI Tests
