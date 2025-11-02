@@ -335,7 +335,7 @@ Archiving a web package in the pipeline requires the configure a target environm
     [Use secure file feature in the pipeline library UI to save the "id_rsa" file](https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops#add-a-secure-file)
     1. Upload a secure file
         Azure DevOps: <project> / "Project Settings" >> Pipelines >> Library >> "Secure Files"
-        ==> upload a file
+        ==> upload a file : id_rsa.pub
         ==> "OK"
     2. Set permissions for a secure file
         Azure DevOps: <project> / "Project Settings" >> Pipelines >> Library >> "Security"
