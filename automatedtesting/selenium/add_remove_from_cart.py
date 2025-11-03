@@ -11,10 +11,13 @@ def login (user, password):
 
   try:
     print ('Starting the browser...')
+    
     # --uncomment when running in Azure DevOps.
-    # options = ChromeOptions()
-    # options.add_argument("--headless") 
-    # driver = webdriver.Chrome(options=options)
+    options = ChromeOptions()
+    options.add_argument("--headless") 
+    driver = webdriver.Chrome(options=options)
+
+    
     driver = webdriver.Chrome()
     print ('Browser started successfully. Navigating to the demo page to login.')
     driver.get('https://www.saucedemo.com/')
@@ -98,4 +101,5 @@ print(f"Final number of items in the cart after removing all products: {cart_ite
 
 
 time.sleep(5)  # Wait for 5 seconds
+
 driver.quit()
