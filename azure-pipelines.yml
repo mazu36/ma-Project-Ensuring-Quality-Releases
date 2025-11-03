@@ -17,9 +17,9 @@ variables:
   # Project root folder. Point to the folder containing manage.py file.
   projectRoot: $(System.DefaultWorkingDirectory)
   # Environment name
-  environmentName: 'test-vm'  # MDE 'test'
+  environmentName: 'test-vm'   
   # Web app name
-  webAppName: 'myAppli3-AppService'  #TODO MDE
+  webAppName: 'myAppli3-AppService'   
   # userAgent
   userAgent : 'devopsagent'
   # # known_host
@@ -54,7 +54,7 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         backendServiceArm: '$(azureServiceConnectionId)'
         backendAzureRmResourceGroupName: 'Azuredevops'  
-        backendAzureRmStorageAccountName: 'tfstate1340416790'
+        backendAzureRmStorageAccountName: 'tfstate148218912'
         backendAzureRmContainerName: 'tfstate'
         backendAzureRmKey: 'test.terraform.tfstate'
 
@@ -105,18 +105,6 @@ stages:
     #    sudo chmod a+r $(udacity_public_key.secureFilePath)
     #    sudo ln -s $(udacity_public_key.secureFilePath) /home/$(userAgent)/Downloads/
 
-
- 
-
-    # ToDo: Change the workingDirectory path, as applicable to you
-    # Destroy the resources in Azure by running a separate pipeline. 
-    # - task: TerraformTaskV3@3
-    #   displayName: Terraform destroy
-    #   inputs:
-    #     provider: 'azurerm'
-    #     command: 'destroy'
-    #     workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-    #     environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
 
     
     # Run Terraform Apply
@@ -172,9 +160,9 @@ stages:
       inputs:
         testResultsFormat: 'JUnit'
         testResultsFiles: '**/TEST-*.xml'
-        searchFolder:     '$(System.DefaultWorkingDirectory)/automatedtesting/postman/postman_results'  # MDE ToDo
+        searchFolder:     '$(System.DefaultWorkingDirectory)/automatedtesting/postman/postman_results'  
         mergeTestResults: true
-        testRunTitle:     'Postman Test'  # ToDo
+        testRunTitle:     'Postman Test'   
 
 #--------------------------------------------#
     # Selenium (UI) Test Suite - Archive the package  
@@ -188,7 +176,7 @@ stages:
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-uitests.zip'
     # Selenium Test Suite - Publish the package  
     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-uitests.zip   # Same as the archiveFile artifact above. 
-      displayName: 'Upload Package'
+      displayName: 'Upload Package uitests'
       artifact: drop-uitests
 
     #--------------------------------------------#    
@@ -197,12 +185,12 @@ stages:
     - task: ArchiveFiles@2
       displayName: 'Archive FakeRestAPI'
       inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/fakerestapi' # MDE
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/fakerestapi'  
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
-      displayName: 'Upload Package'
+      displayName: 'Upload Package fakerestapi'
       artifact: drop-fakerestapi
 
     #--------------------------------------------#  
@@ -211,13 +199,13 @@ stages:
     - task: ArchiveFiles@2
       displayName: 'Archive PerformanceTestSuite'
       inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/test_plans' # MDE
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/test_plans'  
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip'
     # JMeter Test Suite - Publish    
     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip
-      displayName: 'Upload Package'
+      displayName: 'Upload Package perftests'
       artifact: drop-perftests
 
 #--------------------------------------------#  
@@ -231,7 +219,7 @@ stages:
   - deployment: FakeRestAPI
     pool:
       vmImage: 'Ubuntu-22.04'      # MDE 'Ubuntu-18.04'
-      name: myAgentPool  # MDE Confirm
+      name: myAgentPool        # important !
     environment: "$(environmentName)" # MDE <environment name>   # ToDo
     strategy:
       runOnce:
@@ -240,10 +228,10 @@ stages:
           - task: AzureWebApp@1
             displayName: 'Deploy Azure Web App'
             inputs:
-              azureSubscription: $(azureServiceConnectionId)     # '' ToDo MDE
-              appName: $(webAppName)          # '' ToDo MDE 
+              azureSubscription: $(azureServiceConnectionId)    
+              appName: $(webAppName)  
               appType: webApp
-              #package: $(Pipeline.Workspace)/<artifact>/<archiveFile>       # ToDo: Use the published zip artifact. 
+              #package: $(Pipeline.Workspace)/<artifact>/<archiveFile> 
               package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
 
 
@@ -253,9 +241,14 @@ stages:
           - task: CmdLine@2
             inputs:
               script: |
-                wget "https://apache.mirrors.lucidnetworks.net//jmeter/binaries/apache-jmeter-5.6.3.tgz"  #MDE 5.2.1 does not work
+                #wget "https://apache.mirrors.lucidnetworks.net//jmeter/binaries/apache-jmeter-5.6.3.tgz"  #MDE 5.2.1 does not work
+                wget "https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.zip"
                 tar -xf apache-jmeter-5.6.3.tgz
                 unzip -o $(Build.BuildId)-perftests.zip
+                
+                echo $PATH
+                pwd
+                
                 ./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
                 cat jmeter.log                                                                           # ToDo: Write your commands
                 grep -ni summary jmeter.log
@@ -290,23 +283,36 @@ stages:
                 sudo apt-get install python3-pip -y
                 sudo apt-get install unzip -y
                 sudo apt-get install -y chromium-browser
+                which python3
+                python3 --version
+                echo $PATH
+
                 pip3 install selenium
+
+                pip show selenium
+                echo $PATH
+                chromedriver -v
+                google-chrome --version
+                which chromedriver
+                path_to_chromedriver=`chromedriver`
+                PATH=$PATH:$path_to_chromedriver
+
                 cd ~/
-                DIR=/home/azureuser/app
+                DIR=/home/testuser/app
                 if [ ! -d "$DIR" ]; then
                     mkdir app
                 fi
-                mv /home/azureuser/azagent/_work/1/drop-uitests/$(Build.BuildId)-uitests.zip app
+                mv /home/testuser/azagent/_work/1/drop-uitests/$(Build.BuildId)-uitests.zip app
                 cd app
                 unzip -o $(Build.BuildId)-uitests.zip
-                FILE=/home/azureuser/app/chromedriver_linux64.zip
+                FILE=/home/testuser/app/chromedriver_linux64.zip
                 if [ ! -f "$FILE" ]; then
                     LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
                     wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip
                     unzip -o chromedriver_linux64.zip
                     sudo ln -s $PWD/chromedriver /usr/local/bin/chromedriver
                 fi
-                export PATH=$PATH:/home/azureuser/app
+                export PATH=$PATH:/home/testuser/app
                 echo "Starting Selenium Tests"
                 echo "PATH is $PATH"
                 python3 add_remove_from_cart.py >> selenium.log

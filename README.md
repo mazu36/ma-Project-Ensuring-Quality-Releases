@@ -52,14 +52,14 @@ Create a DevOps project
     Resources in Azure DevOps: PAT Personal Access Token, Service conection, Agent Pool, Agent
     Resources in Azure Portal: Create manually a VM, configure it for agent service and all packages needed by your pipeline
 
+1. Azure DevOps: Create a new project
+    name: Quality
 
-1. Azure DevOps: Create PAT Personal Access Token 
+2. Azure DevOps: Create PAT Personal Access Token 
     the top-right user icon "**User settings**" / "Personal access tokens"
             Name : "myPAT"
             Scope: Full access
 
-2. Azure DevOps: Create a new project
-    name: <the name of the relevant repository>
 3. <project_name>/"Project settings": "Service Connection" >> "New Service Connection" 
     name: "myServiceConnection"
     (this is the connection Devops account with Azure account)
@@ -222,7 +222,7 @@ Create a DevOps project
         which pylint
 
         ```
-    5 Install Node
+    5 Install Node v20 on the Agent VM
     ```
         # To install a different version of Node.js, 
         # you can use a **PPA (personal package archive)** maintained by NodeSource. 
@@ -262,29 +262,27 @@ Create a DevOps project
 #   Resources in Azure DevOps: Environment with OS Linux 
 #   Resources in Azure Portal: Create manually a VM, configure it for environment deployment, create an image from it
 
-
-# [C] Instructions for Preparing a VM image
-
-In this part, we 
-1. Create a Linux VM manually, and 
-2. navigate to the DevOps portal to register the VM as **the target environment for your pipeline**.
-   For registration, a provided sh script need to be executed on the Linux VM.
-
-
-
-In one of the pipeline tasks, you need 
+In one of the pipeline tasks, we need 
     => to archive web packages (such as, FakeRestAPI) to a VM, and 
 in another task, 
     => deploy the archived FakeRestAPI to the Azure Web App. 
     
 Archiving a web package in the pipeline requires the configure a target environment of the VM type.
 
+In this part, we 
+1. Create a Linux VM manually, and 
+2. navigate to the DevOps portal to register the VM as **the target environment for your pipeline**.
+   For registration, a provided sh script need to be executed on the Linux VM.
 
+Instructions:
 
 1. Azure Portal: Create manually a new Linux VM 
     VM name: testLinuxVM
+    username: testuser
+    use the same location as agent VM (myLinuxVM) used by Azure pipeline: North Europe
+    Security type: Standard
 2. Azure DevOps: Configure the Test Linux VM 
-    <project> >> "Project settings" >> Environment >> "Create environment"
+    <project> >> "Pipelines" >> Environments >> "Create environment"
         Environment Name: test-vm
         Description:
         Resource: None/Kubernetes/VM 
@@ -301,7 +299,11 @@ Archiving a web package in the pipeline requires the configure a target environm
                 `ssh -i <key-name_path> <username>@<public_ip>`
                 ```
                 chmod 400 ~/.ssh/Downloads.pem
-                ssh -i ~/.ssh/Downloads.pem azureuser@<public_ip>
+                ssh -i ~/.ssh/Downloads.pem testuser@<public_ip>
+                # execute the provided script and set a tag "selenium"
+                # Enter Environment Virtual Machine resource tags? (Y/N) (press enter for N) > Y
+                # Enter Comma separated list of tags (e.g web, db) > selenium
+
                 ```
                 (you can find ssh command syntax using the path:
                     Azure Portal >> Virtuam Machine >> <my_vm> >> Connect >> SSH)
@@ -315,7 +317,7 @@ Archiving a web package in the pipeline requires the configure a target environm
         Image name: testGallery
         Share Image in Azure Compute Gallery
         Gallery: 
-            Gllery name: testGallery
+            Gallery name: testGallery
             OS status: Generalized
             Definition name: testGalleryDef
                 Editor: canonical
@@ -333,49 +335,10 @@ Archiving a web package in the pipeline requires the configure a target environm
 3. Generate an SSH key pair in your local/AZ Cloud shell. 
 4. Put ssh keys into Azure DevOps Library
     [Use secure file feature in the pipeline library UI to save the "id_rsa" file](https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops#add-a-secure-file)
-    1. Upload a secure file
+    Upload a secure file
         Azure DevOps: <project> / "Project Settings" >> Pipelines >> Library >> "Secure Files"
         ==> upload a file : id_rsa.pub
         ==> "OK"
-    2. Set permissions for a secure file
-        Azure DevOps: <project> / "Project Settings" >> Pipelines >> Library >> "Security"
-        select <secure file> 
-            => Security / "Pipeline permissions" / "Approvals and checks"
-        Security            : to set users and security roles that can access the file
-        Pipeline permissions: to select YAML pipelines that can access the file
-        Approvals and checks: to set approvers and other checks for using the file
-42xxxx. 
-
-+ Secret variable
-+ Secure File
-
-We recommend that you don't pass in your public key as plain text to the task configuration. 
-Instead, set a **secret variable** in your pipeline for the contents of your mykey.pub file. 
-
-To set secrets in the web interface, follow these steps:
-
-Go to the Pipelines page, select the appropriate pipeline, and then select Edit.
-Locate the Variables for this pipeline.
-Add or update the variable.
-Select the option to Keep this value secret to store the variable in an encrypted manner.
-Save the pipeline.
-
-
-Then, call the variable in your pipeline definition as $(myPubKey). 
-For the secret part of your key, use the **Secure File library** in Azure Pipelines.
-
-
-### Secret variable in the UI
-To set secrets in the web interface, follow these steps:
-
-Go to the Pipelines page, select the appropriate pipeline, and then select Edit.
-Locate the Variables for this pipeline.
-Add or update the variable.
-Select the option to **Keep this value secret** to store the variable in an encrypted manner.
-Save the pipeline.
-Secret variables are encrypted at rest with a 2048-bit RSA key. Secrets are available on the agent for tasks and scripts to use. 
-
-
 
 3. Terraform scripts updates: terraform.tfvars
     + **terraform/environments/test/terraform.tfvars**
@@ -394,6 +357,11 @@ Secret variables are encrypted at rest with a 2048-bit RSA key. Secrets are avai
     Configure the Storage Account and State Backend
     + launch the script to create a storage account for terraform tfstate
         **terraform/environments/test/configure-tfstate-storage-account.sh**
+        ```
+        az login
+        cd <your_path>/terraform/environments/test/
+        ./configure-tfstate-storage-account.sh
+        ```
      + update informations for terraform backend  
         (use informations provided by configure-tfstate-storage-account.sh)
         **terraform/environments/test/main.tf**
@@ -427,18 +395,18 @@ Secret variables are encrypted at rest with a 2048-bit RSA key. Secrets are avai
                 }
 6. Ensure the variables are correctly set in the terraform files
     Verify whether the variables in input.tf has values attributed (example: resource_group variable)
-7. Launch terraform
+
+7. Develop azure-pipelines.yml file for the two stages
+    Build
+    Deploy
+
+    Verify the parameters : backendAzureRmStorageAccountName, ...
+
+8. Push into the repository
     ```
-    cd <path>.../terraform/environments/test  # go into test folder
-    terraform init
-    terraform show
-    terraform plan
-    terraform apply
-    ```
-    Verify the resources created using Azure Portal
-    Where you finished your tests, destroy the resources:
-    ```
-    terraform destroy
+    git add -A
+    git commit -m "..."
+    git push
     ```
 
 # -------------------------------------------------------
@@ -447,13 +415,13 @@ Secret variables are encrypted at rest with a 2048-bit RSA key. Secrets are avai
 
 
 ## Prerequisites for Azure Pipeline: 
-+ GiHub account: Plugin "Azure Pipeline" is installed and permission is set of our relevant repository.  
+1. GiHub account: Plugin "Azure Pipeline" is installed and permission is set of our relevant repository.  
 
-+ Azure DevOps : Install extension for Terraform
+2. Azure DevOps : Install extension for Terraform
     the top-right menu :   icon  Marketplace >> "Browse marketplace"
 
 
-1.   Create an azure-pipelines.yml config file [Azure Devops, GitHub]
+3.   Create an azure-pipelines.yml config file [Azure Devops, GitHub]
     + Azure Devops <project>/Pipelines/ "Create Pipeline"
             Connect - Github 
             Select  - Select the Github repository containing your application code.
@@ -467,9 +435,7 @@ Secret variables are encrypted at rest with a 2048-bit RSA key. Secrets are avai
     + Run the pipeline
 
 
-
-
-2. Run the pipeline [Azure devOps]
+4. Run the pipeline [Azure devOps]
     + In the pipeline YAML editor: 
         Set/verify the specific values for the 3 parameters of your pipeline:
         pool: myAgentPool
@@ -488,7 +454,9 @@ Secret variables are encrypted at rest with a 2048-bit RSA key. Secrets are avai
         We can see the log about the deployment : "Update web site ..."
 
 
-
+# -------------------------------------------------------
+# Part 5 : Alert & Monitoring
+# -------------------------------------------------------
 
 AAAA
 Configurations
@@ -670,3 +638,8 @@ TestSuite.Regression.json
 [Azure Pipelines task reference](https://learn.microsoft.com/fr-fr/azure/devops/pipelines/tasks/reference/?view=azure-pipelines#what-are-task-input-aliases)
 [Installing Node.js with Apt Using a NodeSource PPA](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-22-04)
 [Deploy Azure VM based on customize Image available on Shared Image Gallery](https://stackoverflow.com/questions/67178590/deploy-azure-vm-based-on-customize-image-available-on-shared-image-gallery)
+
+
+[Azure Pipelines task reference](https://learn.microsoft.com/en-en/azure/devops/pipelines/tasks/reference/?view=azure-pipelines)
+
+[Azure Pipelines task reference](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/?view=azure-pipelines#what-are-task-input-aliases)
