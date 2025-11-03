@@ -116,13 +116,17 @@ stages:
                 unzip -o $(Build.BuildId)-uitests.zip
                 FILE=/home/testuser/app/chromedriver_linux64.zip
                 #if [ ! -f "$FILE" ]; then
-                if True; then
-                    echo f"file $FILE does not exist"
-                    LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
-                    wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip
-                    unzip -o chromedriver_linux64.zip
-                    sudo ln -s $PWD/chromedriver /usr/local/bin/chromedriver
-                fi
+
+                echo f"file $FILE does not exist"
+                LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
+                wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip
+                unzip -o chromedriver_linux64.zip
+                sudo ln -s $PWD/chromedriver /usr/local/bin/chromedriver
+                #fi
+                
+                chromedriver -v
+                google-chrome --version
+                which chromedriver
                 
                 echo f"after verif file $FILE"
                 export PATH=$PATH:/home/testuser/app
@@ -132,6 +136,7 @@ stages:
                 echo "Completed Selenium Tests. Check selenium.log for results."
 
                 
+
 
 
 
