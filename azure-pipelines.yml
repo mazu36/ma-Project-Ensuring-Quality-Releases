@@ -116,7 +116,7 @@ stages:
                 unzip -o $(Build.BuildId)-uitests.zip
                 FILE=/home/testuser/app/chromedriver_linux64.zip
                 #if [ ! -f "$FILE" ]; then
-                if 1==1; then
+                if True; then
                     echo f"file $FILE does not exist"
                     LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
                     wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip
@@ -132,6 +132,7 @@ stages:
                 echo "Completed Selenium Tests. Check selenium.log for results."
 
                 
+
 
 
 
