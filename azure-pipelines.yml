@@ -83,6 +83,17 @@ stages:
               targetType: 'inline'
               script: |           
                 #! /bin/bash
+
+                # NEW mde
+                sudo apt update && sudo apt upgrade -y
+                
+                wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+                sudo apt install -f ./google-chrome-stable_current_amd64.deb -y
+
+                google-chrome --version
+                echo "end of fin"
+                #wget https://storage.googleapis.com/chrome-for-testing-public/133.0.6943.98/linux64/chromedriver-linux64.zip
+                # NEW fin
                 
                 sudo apt-get upgrade -y
                 sudo apt-get install python3-pip -y
@@ -136,6 +147,7 @@ stages:
                 echo "Completed Selenium Tests. Check selenium.log for results."
 
                 
+
 
 
 
