@@ -252,9 +252,9 @@ stages:
                 echo $JAVA_HOME
                 pwd
                 
-                #./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
+                ./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
 
-                ./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f  -l results_file.txt -e -o web_report_folder
+                #./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f  -l results_file.txt -e -o web_report_folder
                 cat jmeter.log                                                                           # ToDo: Write your commands
                 grep -ni summary jmeter.log
                 grep -ni starting jmeter.log
@@ -328,3 +328,4 @@ stages:
                 echo "Completed Selenium Tests. Check selenium.log for results."
 
                 
+
