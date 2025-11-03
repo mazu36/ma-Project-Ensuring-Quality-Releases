@@ -243,7 +243,8 @@ stages:
               script: |
                 #wget "https://apache.mirrors.lucidnetworks.net//jmeter/binaries/apache-jmeter-5.6.3.tgz"  #MDE 5.2.1 does not work
                 wget "https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.zip"
-                tar -xf apache-jmeter-5.6.3.tgz
+                # tar -xf apache-jmeter-5.6.3.tgz
+                unzip -o apache-jmeter-5.6.3.zip
                 unzip -o $(Build.BuildId)-perftests.zip
                 
                 echo $PATH
@@ -289,14 +290,18 @@ stages:
 
                 pip3 install selenium
 
+                PATH=$PATH:"~/.local/bin"
+                echo "PATH after install selenium is $PATH"
                 pip show selenium
                 echo $PATH
                 chromedriver -v
                 google-chrome --version
                 which chromedriver
-                path_to_chromedriver=`chromedriver`
+                path_to_chromedriver=`which chromedriver`
                 PATH=$PATH:$path_to_chromedriver
 
+                
+                echo "PATH later is $PATH"
                 cd ~/
                 DIR=/home/testuser/app
                 if [ ! -d "$DIR" ]; then
