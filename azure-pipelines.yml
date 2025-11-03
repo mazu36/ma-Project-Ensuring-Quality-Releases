@@ -84,17 +84,23 @@ stages:
               script: |           
                 #! /bin/bash
 
-                # NEW mde
-                sudo apt update && sudo apt upgrade -y
+                # NEW mde 142.0.7444.59
+                #sudo apt update && sudo apt upgrade -y
                 
-                wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-                sudo apt install -f ./google-chrome-stable_current_amd64.deb -y
+                #wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+                #sudo apt install -f ./google-chrome-stable_current_amd64.deb -y
 
                 google-chrome --version
                 echo "end of fin"
-                #wget https://storage.googleapis.com/chrome-for-testing-public/133.0.6943.98/linux64/chromedriver-linux64.zip
+                wget https://storage.googleapis.com/chrome-for-testing-public/142.0.7444.59/linux64/chromedriver-linux64.zip
                 # NEW fin
                 
+                unzip chromedriver-linux64.zip
+                sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+                sudo chmod +x /usr/local/bin/chromedriver
+
+                chromedriver --version
+
                 sudo apt-get upgrade -y
                 sudo apt-get install python3-pip -y
                 sudo apt-get install unzip -y
@@ -147,6 +153,7 @@ stages:
                 echo "Completed Selenium Tests. Check selenium.log for results."
 
                 
+
 
 
 
