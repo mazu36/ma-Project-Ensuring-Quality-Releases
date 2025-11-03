@@ -253,15 +253,14 @@ stages:
           - task: CmdLine@2
             inputs:
               script: |
-                # wget "https://apache.mirrors.lucidnetworks.net//jmeter/binaries/apache-jmeter-5.6.3.tgz"  #MDE 5.2.1 does not work
-                # tar -xf apache-jmeter-5.6.3.tgz
-                # unzip -o $(Build.BuildId)-perftests.zip
-                # ./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
-                # cat jmeter.log                                                                           # ToDo: Write your commands
-                # grep -ni summary jmeter.log
-                # grep -ni starting jmeter.log
-                pwd
-                ls -la
+                wget "https://apache.mirrors.lucidnetworks.net//jmeter/binaries/apache-jmeter-5.6.3.tgz"  #MDE 5.2.1 does not work
+                tar -xf apache-jmeter-5.6.3.tgz
+                unzip -o $(Build.BuildId)-perftests.zip
+                ./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
+                cat jmeter.log                                                                           # ToDo: Write your commands
+                grep -ni summary jmeter.log
+                grep -ni starting jmeter.log
+
               #workingDirectory: $(Pipeline.Workspace)/<artifact>            # ToDo: Use the artifact name from the task above
               workingDirectory: $(Pipeline.Workspace)/drop-perftests/
               
@@ -309,6 +308,7 @@ stages:
                 fi
                 export PATH=$PATH:/home/azureuser/app
                 echo "Starting Selenium Tests"
+                echo "PATH is $PATH"
                 python3 add_remove_from_cart.py >> selenium.log
                 echo "Completed Selenium Tests. Check selenium.log for results."
 
