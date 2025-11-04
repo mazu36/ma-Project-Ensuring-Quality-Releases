@@ -1,7 +1,11 @@
+data "azurerm_resource_group" "existing" {
+  name = "${var.custom_image_resource_name}"
+}
+
 data "azurerm_shared_image" "test" {
-  name                = "testGalleryDef"
-  gallery_name        = "testGalery"
-  resource_group_name = "Azuredevops"
+  name                = "${var.custom_image_name}"
+  gallery_name        = "${var.gallery_name}"
+  resource_group_name = "${data.azurerm_resource_group.existing.name}"
 }
 
 
@@ -27,7 +31,8 @@ resource "azurerm_linux_virtual_machine" "test" {
   network_interface_ids = [ "${azurerm_network_interface.test.id}"]
   admin_ssh_key {
     username   = "admin_user"
-    public_key = file("~/myagent/_work/_temp/id_rsa.pub")
+    #public_key = file("~/myagent/_work/_temp/id_rsa.pub")
+    public_key = file("~/.ssh/id_rsa.pub")
   }
   os_disk {
     caching           = "ReadWrite"

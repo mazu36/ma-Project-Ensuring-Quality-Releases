@@ -14,3 +14,7 @@ variable virtual_network_name {}
 variable address_prefix_test {}
 variable address_space {}
 
+# VM Custom image
+variable "gallery_name" {}
+variable "custom_image_name" {} 
+variable "custom_image_resource_name" {}

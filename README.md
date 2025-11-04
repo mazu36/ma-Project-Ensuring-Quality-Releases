@@ -222,11 +222,12 @@ Create a DevOps project
         which pylint
 
         ```
-    5 Install Node v20 on the Agent VM
+    5. Install Node v20 on the Agent VM
     ```
         # To install a different version of Node.js, 
         # you can use a **PPA (personal package archive)** maintained by NodeSource. 
         # install the PPA in order to get access to its packages
+        ```
         cd ~
         curl -sL https://deb.nodesource.com/setup_20.x -o nodesource_setup.sh
 
@@ -252,8 +253,36 @@ Create a DevOps project
         node -v && npm --version
         # v20.19.5
         # 10.8.2
+        ```
     ```
+    6. Install Java JDK on the Agent VM (needed for JMeter)
+    ```
+    curl -O https://download.java.net/java/GA/jdk25.0.1/2fbf10d8c78e40bd87641c434705079d/8/GPL/openjdk-25.0.1_linux-x64_bin.tar.gz
+    tar -xvzf openjdk-25.0.1_linux-x64_bin.tar.gz
 
+    # Update /etc/environment 
+        # Add jdk PATH (/home/devopsagent/jdk-25.0.1/bin) into $PATH
+        # Add JAVA_HOME environment variable into /etc/environment
+    sudo vi /etc/environment 
+    PATH="$PATH:/home/devopsagent/jdk-25.0.1/bin"
+    JAVA_HOME=/home/devopsagent/jdk-25.0.1
+
+    # source environment 
+    source /etc/environment
+
+    # verify java's availability
+    java --version
+    openjdk 25.0.1 2025-10-21
+    OpenJDK Runtime Environment (build 25.0.1+8-27)
+    OpenJDK 64-Bit Server VM (build 25.0.1+8-27, mixed mode, sharing)
+
+    which java
+    /home/devopsagent/jdk-25.0.1/bin/java
+
+    echo $PATH
+    /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/devopsagent/jdk-25.0.1/bin
+
+    ```
 
 
 # -------------------------------------------------------
@@ -272,18 +301,19 @@ Archiving a web package in the pipeline requires the configure a target environm
 In this part, we 
 1. Create a Linux VM manually, and 
 2. navigate to the DevOps portal to register the VM as **the target environment for your pipeline**.
-   For registration, a provided sh script need to be executed on the Linux VM.
+   For registration, a provided sh script needs to be executed on the Linux VM.
 
 Instructions:
 
 1. Azure Portal: Create manually a new Linux VM 
     VM name: testLinuxVM
+    Resource group: Azuredevops
     username: testuser
     use the same location as agent VM (myLinuxVM) used by Azure pipeline: North Europe
     Security type: Standard
 2. Azure DevOps: Configure the Test Linux VM 
     <project> >> "Pipelines" >> Environments >> "Create environment"
-        Environment Name: test-vm
+        Environment Name: "test-vm"
         Description:
         Resource: None/Kubernetes/VM 
         ==>  choose VM
@@ -295,36 +325,55 @@ Instructions:
                 Message: Personal Access Token of the logged in user is pre-inserted by this script.
                         which expires 3 hours later making the coppied script unusable thereon.
                         Once VM is registered, it will start appearing as an environment resource.
-            2. Azure Portal: ssh log into our VM to execute the provided sh script
+            2. Azure CLI: ssh log into our VM to execute the provided sh script
                 `ssh -i <key-name_path> <username>@<public_ip>`
+                (you can find ssh command syntax using the path:
+                    Azure Portal >> Virtuam Machine >> <my_vm> >> Connect >> SSH)
                 ```
                 chmod 400 ~/.ssh/Downloads.pem
                 ssh -i ~/.ssh/Downloads.pem testuser@<public_ip>
-                # execute the provided script and set a tag "selenium"
-                # Enter Environment Virtual Machine resource tags? (Y/N) (press enter for N) > Y
-                # Enter Comma separated list of tags (e.g web, db) > selenium
-
+                => execute the provided script
+                => "Register an agent":
+                    Enter replace (Y/N) (press enter for N) Y 
+                    Enter Environment Virtual Machine resource tags? (Y/N) (press enter for N) > Y
+                    Enter Comma separated list of tags (e.g web, db) > selenium
+                    Successfully added the agent
+                    Testing agent connection.
+                    ...
                 ```
-                (you can find ssh command syntax using the path:
-                    Azure Portal >> Virtuam Machine >> <my_vm> >> Connect >> SSH)
             3. Azure Devops: verify whether this registered VM is available as an environment resource
-                <project> >> "Project settings" >> Environment >> <our_registered_vm>
-3. Azure Portal: Create an image of a VM  
-    Virtual machines >> <your-vm> >> Capture (in the top menu) / Image
+                <project> >> "Project settings" >> Environment >> "test-vm" >> Resources >> "testLinuxVM"
 
-    We can then use this custom image of the VM in the terraform vm.tf script.
-    Create Image
-        Image name: testGallery
-        Share Image in Azure Compute Gallery
-        Gallery: 
-            Gallery name: testGallery
-            OS status: Generalized
-            Definition name: testGalleryDef
+                where 
+                test-vm ... environment name
+                testLinuxVM ... VM we have registered for this environment
+
+3. Azure Portal: Create an image of a VM  
+    We will use this custom image of the VM in the terraform vm.tf script.
+
+    Virtual machines >> <your-vm> >> "Capture" (in the top menu) >> "Image"
+
+    "Create an Image"
+        Project details:
+            Resource group: Azuredevops 
+        Instance details:
+            Share Image in Azure Compute Gallery: Yes
+        Gallery details: 
+            Target Azure compute gallery: "Create new" >> "testGallery"
+            OS state: "Generalized": 
+                VMs created from this image require hostname, admin user, and other VM related setup to be completed on first boot
+            Target VM image definition: "Create new"
+                Name: "myCustomImageDef"
+                VM architecture: x64
                 Editor: canonical
                 Offre: 0001-com-ubuntu-server-jammy
                 Refeence SKU: 22_04-lts-gen2
                 Version number: 0.0.1
+        Version details:
+            Version number: 0.0.1
+            End of life date ... you can stay empty
 
+    NOTE: Capturing a virtual machine image will make the virtual machine unusable. This action cannot be undone. (On the capture creating, the source VM testLinuxVM has been stopped.)
 
 # -------------------------------------------------------
 # Part 3:  Terraform scripts :Infrastructure as Code
@@ -332,12 +381,16 @@ Instructions:
 
 1. Fork [the Starter repository](https://github.com/udacity/cd1807-Project-Ensuring-Quality-Releases)
 2. Clone the forked repository into your local environment.
-3. Generate an SSH key pair in your local/AZ Cloud shell. 
+3. Generate an SSH key pair in your local/AZ Cloud shell:
+    `ssh-keygen -t rsa`
+    azure_pipeline_id_rsa
+    azure_pipeline_id_rsa.pub
 4. Put ssh keys into Azure DevOps Library
     [Use secure file feature in the pipeline library UI to save the "id_rsa" file](https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops#add-a-secure-file)
     Upload a secure file
-        Azure DevOps: <project> / "Project Settings" >> Pipelines >> Library >> "Secure Files"
-        ==> upload a file : id_rsa.pub
+        Azure DevOps: <project>  >> Pipelines >> Library >> "Secure Files"
+        ==> upload a file : azure_pipeline_id_rsa
+        ==> upload a file : azure_pipeline_id_rsa.pub
         ==> "OK"
 
 3. Terraform scripts updates: terraform.tfvars
@@ -381,14 +434,13 @@ Instructions:
         (connection SSH needed to be able to connect to VM and execute selenium UI tests)
         Either configure admin_user/admin_password in vm.tf
         either connfigure admin_ssh_key:
-        1. Generate SSH key-pair: `ssh-keygen -t rsa` # TOCONFIRM whether put pem key
-        2. Update resource linux VM admin_ssh_key configuration
+        => Update resource linux VM admin_ssh_key configuration (use previously generated ssh key)
             either you use a reference for public key
                 admin_ssh_key {
                     username   = "admin_user"
-                    public_key =  "file("~/.ssh/id_rsa.pub")"
+                    public_key =  "file("~/.ssh/azure_pipeline_id_rsa.pub")"
                 }
-            either you use the content for public key: `cat ~/.ssh/id_rsa.pub`
+            either you use the content for public key: `cat ~/.ssh/azure_pipeline_id_rsa.pub`
                 admin_ssh_key {
                     username   = "admin_user"
                     public_key =  "<content public key>"
@@ -396,11 +448,11 @@ Instructions:
 6. Ensure the variables are correctly set in the terraform files
     Verify whether the variables in input.tf has values attributed (example: resource_group variable)
 
-7. Develop azure-pipelines.yml file for the two stages
+7. Develop **azure-pipelines.yml** file for the two stages
     Build
     Deploy
 
-    Verify the parameters : backendAzureRmStorageAccountName, ...
+    + Verify the parameters : backendAzureRmStorageAccountName, ...
 
 8. Push into the repository
     ```
@@ -432,6 +484,7 @@ Instructions:
             => Azure Pipelines creates an azure-pipelines.yml file and displays it in the YAML pipeline editor.
 
     [YAML schema reference](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/pipeline) 
+    + Create variables for InstallSSHKey
     + Run the pipeline
 
 
@@ -643,3 +696,5 @@ TestSuite.Regression.json
 [Azure Pipelines task reference](https://learn.microsoft.com/en-en/azure/devops/pipelines/tasks/reference/?view=azure-pipelines)
 
 [Azure Pipelines task reference](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/?view=azure-pipelines#what-are-task-input-aliases)
+
+[How to Correctly Install ChromeDriver on Ubuntu ](https://tecadmin.net/install-chromedriver-on-ubuntu/)

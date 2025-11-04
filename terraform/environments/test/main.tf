@@ -7,10 +7,10 @@ provider "azurerm" {
 }
 terraform {
   backend "azurerm" {
-    storage_account_name = "tfstate148218912"
+    storage_account_name = "tfstate1851925280"
     container_name       = "tfstate"
     key                  = "test.terraform.tfstate"
-    access_key           = "o1qd0kKK/1Hffzce3EQw1xqp/ryyVGWuYuweDuLJ5pXT8VivZAP603xmB4xMx5NXLgylcXwamZR1+AStO67yxA=="
+    access_key           = "RoEoPaWqcn9vXD+WmEvXgiLBWEljSvIF7/Bia0fcFuMuFlcqa1SesabDiA4M7QoU2lOdTG0UNQTP+AStufx/gg=="
   }
 }
 module "resource_group" {
@@ -53,11 +53,14 @@ module "publicip" {
   resource_group   = "${module.resource_group.resource_group_name}"
 }
 module "vm" {
-  source                = "../../modules/vm"
-  location              = "${var.location}"
-  resource_group_name   = "${module.resource_group.resource_group_name}"
-  application_type      = "${var.application_type}"
-  resource_type         = "vm"
-  subnet_id             = "${module.network.subnet_id_test}"
-  public_ip_address_id  = "${module.publicip.public_ip_address_id}"
+  source                      = "../../modules/vm"
+  location                    = "${var.location}"
+  resource_group_name         = "${module.resource_group.resource_group_name}"
+  application_type            = "${var.application_type}"
+  resource_type               = "vm"
+  subnet_id                   = "${module.network.subnet_id_test}"
+  public_ip_address_id        = "${module.publicip.public_ip_address_id}"
+  gallery_name                = "${var.gallery_name}"
+  custom_image_name           = "${var.custom_image_name}"
+  custom_image_resource_name  = "${var.custom_image_resource_name}"
 }
