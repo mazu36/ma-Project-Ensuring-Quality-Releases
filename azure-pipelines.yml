@@ -88,7 +88,7 @@ stages:
       name: udacity_public_key
       displayName: mySecureFile
       inputs:
-        secureFile: 'id_rsa.pub'
+        secureFile: 'azure_pipeline_id_rsa.pub'
     
     - bash: |
         ls -l /home/devopsagent/myagent/_work/_temp/id_rsa
