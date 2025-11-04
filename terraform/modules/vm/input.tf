@@ -11,3 +11,4 @@ variable "public_ip_address_id" {}
 # Custom image
 variable "gallery_name" {}
 variable "custom_image_name" {} 
+variable "custom_image_resource_name" {}
