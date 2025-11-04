@@ -253,9 +253,9 @@ stages:
                 echo $JAVA_HOME
                 pwd
                 
-                ./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
+                #./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
 
-                #./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f  -l results_file.txt -e -o web_report_folder
+                #./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f  -l results_file.jtl -e -o web_report_folder
                 cat jmeter.log                                                                           # ToDo: Write your commands
                 grep -ni summary jmeter.log
                 grep -ni starting jmeter.log
@@ -310,7 +310,7 @@ stages:
                 # 3.2 Download the matching ChromeDriver version.
 
                 #wget https://storage.googleapis.com/chrome-for-testing-public/133.0.6943.98/linux64/chromedriver-linux64.zip
-                wget_zip_file="wget https://storage.googleapis.com/chrome-for-testing-public/${google_version}/linux64/chromedriver-linux64.zip"
+                wget_zip_file="https://storage.googleapis.com/chrome-for-testing-public/${google_version}/linux64/chromedriver-linux64.zip"
                 wget wget_zip_file
 
                 # 3.3 Extract and configure ChromeDriver to make it globally accessible:
@@ -335,9 +335,6 @@ stages:
                 chromedriver -v
                 google-chrome --version
                 which chromedriver
-                #path_to_chromedriver=`which chromedriver`
-                #PATH=$PATH:$path_to_chromedriver
-
                 
                 cd ~/
                 DIR=/home/testuser/app
@@ -347,16 +344,16 @@ stages:
                 mv /home/testuser/azagent/_work/1/drop-uitests/$(Build.BuildId)-uitests.zip app
                 cd app
                 unzip -o $(Build.BuildId)-uitests.zip
-                FILE=/home/testuser/app/chromedriver_linux64.zip
-                if [ ! -f "$FILE" ]; then
-                    echo f"file $FILE does not exist"
-                    LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
-                    wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip
-                    unzip -o chromedriver_linux64.zip
-                    sudo ln -s $PWD/chromedriver /usr/local/bin/chromedriver
-                fi
+                # FILE=/home/testuser/app/chromedriver_linux64.zip
+                # if [ ! -f "$FILE" ]; then
+                #     echo f"file $FILE does not exist"
+                #     LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
+                #     wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip
+                #     unzip -o chromedriver_linux64.zip
+                #     sudo ln -s $PWD/chromedriver /usr/local/bin/chromedriver
+                # fi
                 
-                echo f"after verif file $FILE"
+                
                 export PATH=$PATH:/home/testuser/app
                 echo "Starting Selenium Tests"
                 echo "PATH is $PATH"
