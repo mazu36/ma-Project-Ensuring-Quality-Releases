@@ -31,8 +31,8 @@ resource "azurerm_linux_virtual_machine" "test" {
   network_interface_ids = [ "${azurerm_network_interface.test.id}"]
   admin_ssh_key {
     username   = "admin_user"
-    #public_key = file("~/myagent/_work/_temp/id_rsa.pub")
-    public_key = file("~/.ssh/id_rsa.pub")
+    #public_key = file("~/myagent/_work/_temp/azure_pipeline_id_rsa.pub")
+    public_key = file("~/.ssh/azure_pipeline_id_rsa.pub")
   }
   os_disk {
     caching           = "ReadWrite"
