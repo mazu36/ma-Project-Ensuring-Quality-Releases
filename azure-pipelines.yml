@@ -74,7 +74,7 @@ stages:
       inputs:
         knownHostsEntry: '$(KNOWN_HOSTS_STRING)' # variable value  # MDE TODO
         sshPublicKey: '$(SSH_PUBLIC_KEY)'            # variable value
-        sshKeySecureFile: 'id_rsa' # Use secure file feature in the pipeline library UI to save the "id_rsa" file, as mentioned here: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops#add-a-secure-file
+        sshKeySecureFile: 'azure_pipeline_id_rsa' # Use secure file feature in the pipeline library UI to save the "id_rsa" file, as mentioned here: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops#add-a-secure-file
     
     - bash: |
         ls -l /home/devopsagent/myagent/_work/_temp/id_rsa
