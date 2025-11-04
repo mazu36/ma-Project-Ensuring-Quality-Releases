@@ -98,6 +98,7 @@ stages:
         echo "HOME is $(HOME)"
         echo "PATH is $(PATH)"
         echo "USER is $(USER)"
+        cp ~/myagent/_work/_temp/azure_pipeline_id_rsa.pub ~/.ssh/azure_pipeline_id_rsa.pub
     
     # #- script: |
     # #    echo Installing $(udacity_public_key.secureFilePath) to the trusted CA directory...
