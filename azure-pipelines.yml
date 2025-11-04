@@ -255,7 +255,7 @@ stages:
                 
                 #./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
 
-                #./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f  -l results_file.jtl -e -o web_report_folder
+                ./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f  -l results_file.jtl -e -o web_report_folder
                 cat jmeter.log                                                                           # ToDo: Write your commands
                 grep -ni summary jmeter.log
                 grep -ni starting jmeter.log
@@ -269,15 +269,15 @@ stages:
   - deployment: VMDeploy
     displayName: Selenium Tests
     environment:
-      name:  "$(environmentName)"       # ToDo: Change/provide a name
+      name:  "$(environmentName)"       
       resourceType: VirtualMachine
-      tags: selenium  #MDE
+      tags: selenium   
     strategy:
       runOnce:
         deploy:
           steps:
           - download: current
-            artifact: drop-uitests     # ToDo: Change/provide a name
+            artifact: drop-uitests      
             
           - task: Bash@3
             inputs:
@@ -310,7 +310,7 @@ stages:
                 # 3.2 Download the matching ChromeDriver version.
 
                 #wget https://storage.googleapis.com/chrome-for-testing-public/133.0.6943.98/linux64/chromedriver-linux64.zip
-                wget_zip_file="https://storage.googleapis.com/chrome-for-testing-public/${google_version}/linux64/chromedriver-linux64.zip"
+                wget_zip_file="https://storage.googleapis.com/chrome-for-testing-public/$(google_version)/linux64/chromedriver-linux64.zip"
                 wget wget_zip_file
 
                 # 3.3 Extract and configure ChromeDriver to make it globally accessible:
