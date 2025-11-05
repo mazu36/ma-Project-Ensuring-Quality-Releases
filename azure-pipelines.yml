@@ -311,7 +311,7 @@ stages:
 
                 #wget https://storage.googleapis.com/chrome-for-testing-public/133.0.6943.98/linux64/chromedriver-linux64.zip
                 wget_zip_file="https://storage.googleapis.com/chrome-for-testing-public/$(google_version)/linux64/chromedriver-linux64.zip"
-                wget wget_zip_file
+                wget $(wget_zip_file)
 
                 # 3.3 Extract and configure ChromeDriver to make it globally accessible:
                 unzip chromedriver-linux64.zip
