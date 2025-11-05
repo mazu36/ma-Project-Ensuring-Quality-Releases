@@ -74,10 +74,9 @@ buttons_ids = [button.get_attribute("id") for button in buttons_add]
 print(f"Buttons 'add-to-cart' are: {buttons_ids}")
 
 
-driver.implicitly_wait(20)
+#driver.implicitly_wait(20)
 
-time.sleep(40)  # Wait for 40 seconds
-#time.sleep(40)  # Wait for 40 seconds
+time.sleep(20)  # Wait for 20 seconds 
 
 for idx, button_id in enumerate(buttons_ids): 
   driver.find_element(By.ID, button_id).click() 

@@ -16,6 +16,6 @@ address_space = ["10.5.0.0/16"]
 address_prefix_test = "10.5.1.0/24"
 
 # VM Custom image
-gallery_name          = "testGallery"
-custom_image_name     = "myCustomImageDef"
+gallery_name          = "newGallery"
+custom_image_name     = "newCustomImageDef"
 custom_image_resource_name = "Azuredevops"

@@ -389,7 +389,7 @@ Instructions:
     Upload a secure file
         Azure DevOps: <project>  >> Pipelines >> Library >> "Secure Files"
         ==> upload a file : azure_pipeline_id_rsa
-        ==> upload a file : azure_pipeline_id_rsa.pub  #MDE TODO
+        ==> upload a file : azure_pipeline_id_rsa.pub   
         ==> "OK"
 
 3. Terraform scripts updates: terraform.tfvars
@@ -478,12 +478,26 @@ Instructions:
             Select  - Select the Github repository containing your application code.
             Configure - Choose existing azure-pipelines-minimal.yml file
 
+            Review >> "Variables"
+                 Create variables for InstallSSHKey
+                => variable KNOWN_HOSTS_STRING 
+                    initial value : "test"
+                    after myAppli3-vm is created by terraform, 
+                        generate a string for KNOWN_HOSTS 
+                        in the myLinuxVM by the command
+                         `ssh-keyscan -p 22 <public >
+                => variable SSH_PUBLIC_KEY
+                    cat azure_pipeline_id_rsa.pub
+
+        How to get PIPELINE : VM appli3
+devopsagent@myLinuxVM:~/myagent/_work/1/drop-perftests$ ssh-keyscan -p 22 132.164.248.195
+
             your Azure subscription => "Continue"
             your Azure Web App      => "Validate and configure"
             => Azure Pipelines creates an azure-pipelines.yml file and displays it in the YAML pipeline editor.
 
     [YAML schema reference](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/pipeline) 
-    + Create variables for InstallSSHKey
+
     + Run the pipeline
 
 
