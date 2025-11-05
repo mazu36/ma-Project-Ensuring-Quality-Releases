@@ -141,7 +141,7 @@ stages:
                     VERSION_NEEDED=142.0.7444.59
                     wget https://storage.googleapis.com/chrome-for-testing-public/$VERSION_NEEDED/linux64/chromedriver-linux64.zip
                     unzip -o chromedriver-linux64.zip
-                    sudo ln -s $PWD/chromedriver /usr/local/bin/chromedriver
+                    sudo ln -sfn $PWD/chromedriver /usr/local/bin/chromedriver
                     #sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
                     #sudo chmod +x /usr/local/bin/chromedriver
                     chromedriver --version
