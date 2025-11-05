@@ -97,7 +97,7 @@ stages:
           rm azure_pipeline_id_rsa.pub
 
         fi
-        sudo ln -s $(udacity_public_key.secureFilePath) $trusted_folder
+        sudo ln -sfn $(udacity_public_key.secureFilePath) $trusted_folder
         #cp ~/myagent/_work/_temp/azure_pipeline_id_rsa.pub ~/.ssh/azure_pipeline_id_rsa.pub
 
 
