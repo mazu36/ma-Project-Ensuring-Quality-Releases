@@ -103,7 +103,12 @@ stages:
         echo Installing $(udacity_public_key.secureFilePath) to the trusted CA directory...
         sudo chown root:root $(udacity_public_key.secureFilePath)
         sudo chmod a+r $(udacity_public_key.secureFilePath)
-        sudo ln -s $(udacity_public_key.secureFilePath) /home/$(userAgent)/Downloads/
+        trusted_folder="/home/$(userAgent)/Downloads/"
+        if [ ! -d $trusted_folder ]; then
+          echo f"folder $trusted_folder does not exist"
+          mkdir $trusted_folder
+        fi
+        sudo ln -s $(udacity_public_key.secureFilePath) $trusted_folder
 
 
     
