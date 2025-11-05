@@ -107,13 +107,14 @@ stages:
                 google-chrome --version
                 wget https://storage.googleapis.com/chrome-for-testing-public/142.0.7444.59/linux64/chromedriver-linux64.zip
                 
+                echo "DEBUG 1"
                 unzip chromedriver-linux64.zip
                 sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
                 sudo chmod +x /usr/local/bin/chromedriver
 
                 google-chrome --version
                 chromedriver --version
-
+                echo "DEBUG 2"
                 sudo apt-get upgrade -y
                 sudo apt-get install python3-pip -y
                 sudo apt-get install unzip -y
@@ -129,13 +130,14 @@ stages:
                 echo "PATH after install selenium is $PATH"
                 pip show selenium
 
+                echo "DEBUG 3"
                 chromedriver -v
                 google-chrome --version
                 which chromedriver
                 path_to_chromedriver=`which chromedriver`
                 PATH=$PATH:$path_to_chromedriver
 
-                
+                echo "DEBUG 4"
                 echo "PATH later is $PATH"
                 cd ~/
                 DIR=/home/testuser/app
