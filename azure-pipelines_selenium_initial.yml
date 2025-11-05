@@ -1,0 +1,130 @@
+name: Azure Pipelines
+
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+trigger:
+- main
+
+# ToDo: Replace the agent pool name, if you are using Udacity Cloud lab. 
+# Otherwise, comment out the line below. 
+pool: myAgentPool
+
+variables:
+  python.version: '3.9.24'  #'3.7.6'
+  # ToDo: Replace the service connection name as used in the DevOps project settings
+  azureServiceConnectionId: 'myServiceConnection'
+  # Project root folder. Point to the folder containing manage.py file.
+  projectRoot: $(System.DefaultWorkingDirectory)
+  # Environment name
+  environmentName: 'test-vm'   
+  # Web app name
+  webAppName: 'myAppli3-AppService'   
+  # userAgent
+  userAgent : 'devopsagent'
+  # # known_host
+  # known_host : ''
+  # # SSH public key
+  # SSH_PUBLIC_KEY: ''
+
+
+stages:
+#--------------------------------------------#  
+# BUILD STAGE
+#--------------------------------------------#    
+- stage: Build
+  jobs:
+  - job: BuildInfrastructure
+    steps:
+    #--------------------------------------------#  
+  
+   
+    #--------------------------------------------#
+    # Selenium (UI) Test Suite - Archive the package  
+    # "ArchiveFiles@2" picks up the web package and archives it.
+    - task: ArchiveFiles@2
+      displayName: 'Archive UI Tests'
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-uitests.zip'
+    # Selenium Test Suite - Publish the package  
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-uitests.zip   # Same as the archiveFile artifact above. 
+      displayName: 'Upload Package uitests'
+      artifact: drop-uitests
+
+
+#--------------------------------------------#  
+# DEPLOYMENT STAGE
+#--------------------------------------------#    
+- stage: Deploy
+  jobs:
+ 
+ 
+  #--------------------------------------------#  
+  # Selenium | Functional UI Tests
+  # ToDo: 
+  - deployment: VMDeploy
+    displayName: Selenium Tests
+    environment:
+      name:  "$(environmentName)"       # ToDo: Change/provide a name
+      resourceType: VirtualMachine
+      tags: selenium  #MDE
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop-uitests     # ToDo: Change/provide a name
+            
+          - task: Bash@3- task: Bash@3
+            inputs:
+              targetType: 'inline'
+              script: |           
+                #! /bin/bash
+                echo "DEBUG START 1"
+                chromedriver -v
+                google-chrome --version
+                which chromedriver
+
+                sudo apt-get upgrade -y
+                sudo apt-get install python3-pip -y
+                sudo apt-get install unzip -y
+                sudo apt-get install -y chromium-browser
+
+                
+                echo "DEBUG START 2"
+                chromedriver -v
+                google-chrome --version
+                which chromedriver
+
+                pip3 install selenium
+                
+                echo "DEBUG START 3"
+                chromedriver -v
+                google-chrome --version
+                which chromedriver
+                pip show selenium
+
+                # cd ~/
+                # DIR=/home/testuser/app
+                # if [ ! -d "$DIR" ]; then
+                #     mkdir app
+                # fi
+                # mv /home/testuser/azagent/_work/1/drop-uitests/$(Build.BuildId)-uitests.zip app
+                # cd app
+                # unzip -o $(Build.BuildId)-uitests.zip
+                # FILE=/home/testuser/app/chromedriver_linux64.zip
+                # if [ ! -f "$FILE" ]; then
+                #     LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
+                #     wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip
+                #     unzip -o chromedriver_linux64.zip
+                #     sudo ln -s $PWD/chromedriver /usr/local/bin/chromedriver
+                # fi
+                # export PATH=$PATH:/home/testuser/app
+                # echo "Starting Selenium Tests"
+                # python3 login.py >> selenium.log
+                # 
+                # cat selenium.log
+                # echo "Completed Selenium Tests. Check selenium.log for results."

@@ -260,12 +260,11 @@ Create a DevOps project
     curl -O https://download.java.net/java/GA/jdk25.0.1/2fbf10d8c78e40bd87641c434705079d/8/GPL/openjdk-25.0.1_linux-x64_bin.tar.gz
     tar -xvzf openjdk-25.0.1_linux-x64_bin.tar.gz
 
-    # Update /etc/environment 
+    # Update /etc/environment file:
         # Add jdk PATH (/home/devopsagent/jdk-25.0.1/bin) into $PATH
         # Add JAVA_HOME environment variable into /etc/environment
-    sudo vi /etc/environment 
-    PATH="$PATH:/home/devopsagent/jdk-25.0.1/bin"
-    JAVA_HOME=/home/devopsagent/jdk-25.0.1
+            JAVA_HOME=/home/devopsagent/jdk-25.0.1/
+
 
     # source environment 
     source /etc/environment
@@ -328,7 +327,7 @@ Instructions:
             2. Azure CLI: ssh log into our VM to execute the provided sh script
                 `ssh -i <key-name_path> <username>@<public_ip>`
                 (you can find ssh command syntax using the path:
-                    Azure Portal >> Virtuam Machine >> <my_vm> >> Connect >> SSH)
+                    Azure Portal >> Virtual Machine >> <my_vm> >> Connect >> SSH)
                 ```
                 chmod 400 ~/.ssh/Downloads.pem
                 ssh -i ~/.ssh/Downloads.pem testuser@<public_ip>
@@ -390,7 +389,7 @@ Instructions:
     Upload a secure file
         Azure DevOps: <project>  >> Pipelines >> Library >> "Secure Files"
         ==> upload a file : azure_pipeline_id_rsa
-        ==> upload a file : azure_pipeline_id_rsa.pub
+        ==> upload a file : azure_pipeline_id_rsa.pub  #MDE TODO
         ==> "OK"
 
 3. Terraform scripts updates: terraform.tfvars
@@ -471,7 +470,7 @@ Instructions:
 
 2. Azure DevOps : Install extension for Terraform
     the top-right menu :   icon  Marketplace >> "Browse marketplace"
-
+        MicrosoftDevLabs
 
 3.   Create an azure-pipelines.yml config file [Azure Devops, GitHub]
     + Azure Devops <project>/Pipelines/ "Create Pipeline"
