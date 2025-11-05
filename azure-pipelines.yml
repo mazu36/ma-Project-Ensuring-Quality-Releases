@@ -130,7 +130,8 @@ stages:
                 cd app
                 unzip -o $(Build.BuildId)-uitests.zip
                 FILE=/home/testuser/app/chromedriver_linux64.zip
-                if [ ! -f "$FILE" ]; then
+                #if [ ! -f "$FILE" ]; then
+                if [ len("$FILE") > 0 ]; then
                     #LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
                     #wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip
                     #unzip -o chromedriver_linux64.zip
