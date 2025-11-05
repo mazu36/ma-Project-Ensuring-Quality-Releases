@@ -254,16 +254,7 @@ stages:
                 sudo apt install -f ./google-chrome-stable_current_amd64.deb -y
 
                 google-chrome --version
-                wget https://storage.googleapis.com/chrome-for-testing-public/142.0.7444.59/linux64/chromedriver-linux64.zip
-                pwd
                 
-                echo "DEBUG 3"
-                pwd
-                unzip ./chromedriver-linux64.zip
-                ls -lart
-                rm ./chromedriver-linux64.zip  #MDE
-                sudo mv ./chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
-                sudo chmod +x /usr/local/bin/chromedriver
 
                 google-chrome --version
                 chromedriver --version
@@ -295,7 +286,23 @@ stages:
                 mv /home/testuser/azagent/_work/1/drop-uitests/$(Build.BuildId)-uitests.zip app
                 cd app
                 unzip -o $(Build.BuildId)-uitests.zip
-                FILE=/home/testuser/app/chromedriver_linux64.zip
+                FILE=/home/testuser/app/chromedriver_linux64.zip 
+                if [ ! -f "$FILE" ]; then
+                  wget https://storage.googleapis.com/chrome-for-testing-public/142.0.7444.59/linux64/chromedriver-linux64.zip
+                  pwd 
+                  echo "DEBUG 3"
+                  pwd
+                  unzip -o ./chromedriver-linux64.zip
+                  ls -lart
+                 
+                  #sudo mv ./chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+                  #sudo chmod +x /usr/local/bin/chromedriver
+ 
+                  # LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
+                  # wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip
+                  #unzip -o chromedriver_linux64.zip
+                  sudo ln -s $PWD/chromedriver /usr/local/bin/chromedriver
+                fi
 
                 
                 chromedriver -v
@@ -310,5 +317,6 @@ stages:
                 echo "Completed Selenium Tests. Check selenium.log for results."
 
                 
+
 
 
