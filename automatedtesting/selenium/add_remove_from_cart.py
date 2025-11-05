@@ -5,12 +5,18 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 import time
 
+import logging
+logging.basicConfig(
+    format='%(asctime)s %(levelname)-8s %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S')
+
 
 # Start the browser and login with standard_user
 def login (user, password):
 
   try:
-    print ('Starting the browser...')
+    logging.info('Starting the browser...')
     #driver = webdriver.Chrome()  # MDE: when launched locally  
     
     # --uncomment when running in Azure DevOps.
@@ -24,17 +30,18 @@ def login (user, password):
     driver = webdriver.Chrome(options=options)
 
     
-    print ('Browser started successfully. Navigating to the demo page to login.')
+    logging.info('Browser started successfully. Navigating to the demo page to login.')
     driver.get('https://www.saucedemo.com/')
+    myappli3-appservice.azurewebsites.net
 
-    print(f"Connection of the user {user}:")
+    logging.info(f"Connection of the user {user}:")
     driver.find_element(By.ID, 'user-name').send_keys(user)
     driver.find_element(By.ID, 'password').send_keys(password)
     driver.find_element(By.ID, 'login-button').click()
-    print(f"Connection of the user {user} is processed successfully")
+    logging.info(f"Connection of the user {user} is processed successfully")
     return (0, driver)
   except RuntimeError as e:
-    print(f"Error {e} on login of the user {user}")
+    logging.info(f"Error {e} on login of the user {user}")
     return (1,driver)
 
 # --------------------------------------------------------
@@ -53,11 +60,11 @@ driver.implicitly_wait(2)
 # UI Test 1: adds all products to a cart, 
 # UI Test 2: removes all products from a cart.
 
-print("Retrieving shopping cart icon:")
+logging.info("Retrieving shopping cart icon:")
 cart_icon = driver.find_element(By.CSS_SELECTOR, "a.shopping_cart_link")
-print("Shopping cart icon is retrieved successfully")
+logging.info("Shopping cart icon is retrieved successfully")
 cart_item_count = cart_icon.text
-print(f"Initial Number of items in the cart: {cart_item_count} item(s)")
+logging.info(f"Initial Number of items in the cart: {cart_item_count} item(s)")
 
 
 
@@ -65,13 +72,13 @@ print(f"Initial Number of items in the cart: {cart_item_count} item(s)")
 time.sleep(5)  # Wait for 5 seconds
 
 #  --- Test 1 ---
-print("*** UI Test 1: adding all products to a cart***")
+logging.info("*** UI Test 1: adding all products to a cart***")
 # Find all <button> elements with an 'id' attribute whose id starts with 'add-to-cart'
 buttons_add = driver.find_elements(By.CSS_SELECTOR, "button[id^='add-to-cart']")
 
 # Extract button IDs into a Python list
 buttons_ids = [button.get_attribute("id") for button in buttons_add]
-print(f"Buttons 'add-to-cart' are: {buttons_ids}")
+logging.info(f"Buttons 'add-to-cart' are: {buttons_ids}")
 
 
 #driver.implicitly_wait(20)
@@ -81,32 +88,33 @@ time.sleep(20)  # Wait for 20 seconds
 for idx, button_id in enumerate(buttons_ids): 
   driver.find_element(By.ID, button_id).click() 
   cart_item_count = cart_icon.text
-  print(f"Step {idx} Adding: Number of items in the cart: {cart_item_count} button_id  {button_id}") 
+  logging.info(f"Step {idx} Adding: Number of items in the cart: {cart_item_count} button_id  {button_id}") 
 
 cart_item_count = cart_icon.text
-print(f"Final number of items in the cart after adding all products: {cart_item_count} item(s)")
+logging.info(f"Final number of items in the cart after adding all products: {cart_item_count} item(s)")
 
 
 #  --- Test 2 ---
-print("*** UI Test 2: removing all products from a cart***")
+logging.info("*** UI Test 2: removing all products from a cart***")
 # Find all <button> elements with an 'id' attribute whose id starts with 'add-to-cart'
 buttons_rm = driver.find_elements(By.CSS_SELECTOR, "button[id^='remove']")
 
 # Extract button IDs into a Python list
 buttons_ids = [button.get_attribute("id") for button in buttons_rm]
-print(f"Buttons 'remove' are: {buttons_ids}")
+logging.info(f"Buttons 'remove' are: {buttons_ids}")
 for idx, button_id in enumerate(buttons_ids):
   driver.find_element(By.ID, button_id).click()
   cart_item_count = cart_icon.text
-  print(f"Step {idx} Removing: Number of items in the cart: {cart_item_count}")
+  logging.info(f"Step {idx} Removing: Number of items in the cart: {cart_item_count}")
 
 cart_item_count = cart_icon.text 
-print(f"Final number of items in the cart after removing all products: {cart_item_count} item(s)")
+logging.info(f"Final number of items in the cart after removing all products: {cart_item_count} item(s)")
 
 
 time.sleep(5)  # Wait for 5 seconds
 
 driver.quit()
+
 
 
 
