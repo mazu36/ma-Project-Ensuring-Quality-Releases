@@ -31,8 +31,7 @@ def login (user, password):
 
     
     logging.info('Browser started successfully. Navigating to the demo page to login.')
-    driver.get('https://www.saucedemo.com/')
-    myappli3-appservice.azurewebsites.net
+    driver.get('https://www.saucedemo.com/') 
 
     logging.info(f"Connection of the user {user}:")
     driver.find_element(By.ID, 'user-name').send_keys(user)
@@ -114,6 +113,7 @@ logging.info(f"Final number of items in the cart after removing all products: {c
 time.sleep(5)  # Wait for 5 seconds
 
 driver.quit()
+
 
 
 
