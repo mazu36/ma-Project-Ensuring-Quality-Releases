@@ -261,6 +261,7 @@ stages:
                 pwd
                 unzip ./chromedriver-linux64.zip
                 ls -lart
+                rm ./chromedriver-linux64.zip  #MDE
                 sudo mv ./chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
                 sudo chmod +x /usr/local/bin/chromedriver
 
@@ -309,4 +310,5 @@ stages:
                 echo "Completed Selenium Tests. Check selenium.log for results."
 
                 
+
 
