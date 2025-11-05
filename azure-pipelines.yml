@@ -84,7 +84,7 @@ stages:
     environment:
       name:  "$(environmentName)"       # ToDo: Change/provide a name
       resourceType: VirtualMachine
-      tags: selenium  #MDE
+      tags: selenium   
     strategy:
       runOnce:
         deploy:
@@ -97,67 +97,74 @@ stages:
               targetType: 'inline'
               script: |           
                 #! /bin/bash
-                echo "DEBUG START 1"
-                chromedriver -v
-                chromium --version
-                which chromium
+
+                # NEW mde 142.0.7444.59
+                sudo apt update && sudo apt upgrade -y
+                
+                wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+                sudo apt install -f ./google-chrome-stable_current_amd64.deb -y
+
+                google-chrome --version
+                echo "end of fin"
+                wget https://storage.googleapis.com/chrome-for-testing-public/142.0.7444.59/linux64/chromedriver-linux64.zip
+                # NEW fin
+                
+                unzip chromedriver-linux64.zip
+                sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+                sudo chmod +x /usr/local/bin/chromedriver
+
+                chromedriver --version
 
                 sudo apt-get upgrade -y
                 sudo apt-get install python3-pip -y
                 sudo apt-get install unzip -y
                 sudo apt-get install -y chromium-browser
-
-                
-                echo "DEBUG START 2"
-                chromedriver -v
-                chromium --version
-                which chromium
+                which python3
+                python3 --version
+                echo $PATH
 
                 pip3 install selenium
-                
-                echo "DEBUG START 3"
-                chromedriver -v
-                chromium --version
-                which chromium
-                pip show selenium
 
+                PATH=$PATH:"~/.local/bin"
+                echo "PATH after install selenium is $PATH"
+                pip show selenium
+                echo $PATH
+                chromedriver -v
+                google-chrome --version
+                which chromedriver
+                path_to_chromedriver=`which chromedriver`
+                PATH=$PATH:$path_to_chromedriver
+
+                
+                echo "PATH later is $PATH"
                 cd ~/
                 DIR=/home/testuser/app
-                if [ -d "$DIR" ]; then
-                    rm -r $DIR/*
-                else
-                    mkdir $DIR
+                if [ ! -d "$DIR" ]; then
+                    mkdir app
                 fi
                 mv /home/testuser/azagent/_work/1/drop-uitests/$(Build.BuildId)-uitests.zip app
                 cd app
                 unzip -o $(Build.BuildId)-uitests.zip
                 FILE=/home/testuser/app/chromedriver_linux64.zip
                 #if [ ! -f "$FILE" ]; then
-                if [ -n "$FILE"  ]; then
-                    #LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
-                    #wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip
-                    #unzip -o chromedriver_linux64.zip
-                    #sudo ln -s $PWD/chromedriver 
 
-
-                    VERSION_NEEDED=142.0.7444.59
-                    wget https://storage.googleapis.com/chrome-for-testing-public/$VERSION_NEEDED/linux64/chromedriver-linux64.zip
-                    unzip -o chromedriver-linux64.zip
-                    ## sudo ln -sfn $PWD/chromedriver /usr/local/bin/chromedriver ... does not work, there is still an old version
-                    sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
-                    sudo chmod +x /usr/local/bin/chromedriver
-                    chromedriver --version
-                    echo "DEBUG START 4"
-                    chromedriver -v
-                    chromium --version
-                fi
-                export PATH=$PATH:/home/testuser/app
-                echo "DEBUG START 5"
-                chromedriver -v
-                chromium --version
-
-                echo "Starting Selenium Tests"
-                python3 add_remove_from_cart.py >> selenium.log
+                echo f"file $FILE does not exist"
+                LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
+                wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip
+                unzip -o chromedriver_linux64.zip
+                sudo ln -s $PWD/chromedriver /usr/local/bin/chromedriver
+                #fi
                 
+                chromedriver -v
+                google-chrome --version
+                which chromedriver
+                
+                echo f"after verif file $FILE"
+                export PATH=$PATH:/home/testuser/app
+                echo "Starting Selenium Tests"
+                echo "PATH is $PATH"
+                python3 add_remove_from_cart.py >> selenium.log
                 cat selenium.log
                 echo "Completed Selenium Tests. Check selenium.log for results."
+
+                
