@@ -91,8 +91,11 @@ stages:
           echo f"folder $trusted_folder does not exist"
           mkdir $trusted_folder
         fi
+        echo "File path is: $(udacity_public_key.secureFilePath)"
         if [ -l $(udacity_public_key.secureFilePath) ]; then
-          rm $(udacity_public_key.secureFilePath)
+          #rm $(udacity_public_key.secureFilePath)
+          rm azure_pipeline_id_rsa.pub
+
         fi
         sudo ln -s $(udacity_public_key.secureFilePath) $trusted_folder
         #cp ~/myagent/_work/_temp/azure_pipeline_id_rsa.pub ~/.ssh/azure_pipeline_id_rsa.pub
