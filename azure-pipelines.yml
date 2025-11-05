@@ -248,15 +248,19 @@ stages:
                 python3 --version
                 echo $PATH
                 
-                echo "DEBUG 2"
+                echo "DEBUG 2 "
+                pwd
                 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
                 sudo apt install -f ./google-chrome-stable_current_amd64.deb -y
 
                 google-chrome --version
                 wget https://storage.googleapis.com/chrome-for-testing-public/142.0.7444.59/linux64/chromedriver-linux64.zip
+                pwd
                 
                 echo "DEBUG 3"
+                pwd
                 unzip ./chromedriver-linux64.zip
+                ls -lart
                 sudo mv ./chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
                 sudo chmod +x /usr/local/bin/chromedriver
 
@@ -305,3 +309,4 @@ stages:
                 echo "Completed Selenium Tests. Check selenium.log for results."
 
                 
+
