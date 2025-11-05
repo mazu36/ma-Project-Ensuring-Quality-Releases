@@ -145,8 +145,15 @@ stages:
                     #sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
                     #sudo chmod +x /usr/local/bin/chromedriver
                     chromedriver --version
+                    echo "DEBUG START 4"
+                    chromedriver -v
+                    chromium --version
                 fi
                 export PATH=$PATH:/home/testuser/app
+                echo "DEBUG START 5"
+                chromedriver -v
+                chromium --version
+                
                 echo "Starting Selenium Tests"
                 python3 add_remove_from_cart.py >> selenium.log
                 
