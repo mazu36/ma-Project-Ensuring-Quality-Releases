@@ -237,25 +237,9 @@ stages:
               script: |           
                 #! /bin/bash
 
-                # NEW mde 142.0.7444.59
-                sudo apt update && sudo apt upgrade -y
-                
-                wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-                sudo apt install -f ./google-chrome-stable_current_amd64.deb -y
-
-                google-chrome --version
-                wget https://storage.googleapis.com/chrome-for-testing-public/142.0.7444.59/linux64/chromedriver-linux64.zip
-                
+                # NEW version 142.0.7444.59
                 echo "DEBUG 1"
-                unzip chromedriver-linux64.zip
-                sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
-                sudo chmod +x /usr/local/bin/chromedriver
-
-                google-chrome --version
-                chromedriver --version
-
-                echo "DEBUG 2"
-                sudo apt-get upgrade -y
+                sudo apt update && sudo apt upgrade -y 
                 sudo apt-get install python3-pip -y
                 sudo apt-get install unzip -y
                 #sudo apt-get install -y chromium-browser # MDE ... we use google chrome
@@ -263,6 +247,23 @@ stages:
                 which python3
                 python3 --version
                 echo $PATH
+                
+                echo "DEBUG 2"
+                wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+                sudo apt install -f ./google-chrome-stable_current_amd64.deb -y
+
+                google-chrome --version
+                wget https://storage.googleapis.com/chrome-for-testing-public/142.0.7444.59/linux64/chromedriver-linux64.zip
+                
+                echo "DEBUG 3"
+                unzip ./chromedriver-linux64.zip
+                sudo mv ./chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+                sudo chmod +x /usr/local/bin/chromedriver
+
+                google-chrome --version
+                chromedriver --version
+
+                
 
                 pip3 install selenium
 
