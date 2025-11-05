@@ -19,13 +19,12 @@ variables:
   # Environment name
   environmentName: 'test-vm'   
   # Web app name
-  webAppName: 'myAppli3-AppService'   
+  webAppName: 'myAppli3-AppService' 
+  # chromedriver version
+  chromedriverVersion: '142.0.7444.59'
   # userAgent
   userAgent : 'devopsagent'
-  # # known_host
-  # known_host : ''
-  # # SSH public key
-  # SSH_PUBLIC_KEY: ''
+
 
 
 stages:
@@ -98,13 +97,13 @@ stages:
         echo "HOME is $(HOME)"
         echo "PATH is $(PATH)"
         echo "USER is $(USER)"
-        cp ~/myagent/_work/_temp/azure_pipeline_id_rsa.pub ~/.ssh/azure_pipeline_id_rsa.pub
+        #cp ~/myagent/_work/_temp/azure_pipeline_id_rsa.pub ~/.ssh/azure_pipeline_id_rsa.pub
     
-    # #- script: |
-    # #    echo Installing $(udacity_public_key.secureFilePath) to the trusted CA directory...
-    #    sudo chown root:root $(udacity_public_key.secureFilePath)
-    #    sudo chmod a+r $(udacity_public_key.secureFilePath)
-    #    sudo ln -s $(udacity_public_key.secureFilePath) /home/$(userAgent)/Downloads/
+    - script: |
+        echo Installing $(udacity_public_key.secureFilePath) to the trusted CA directory...
+        sudo chown root:root $(udacity_public_key.secureFilePath)
+        sudo chmod a+r $(udacity_public_key.secureFilePath)
+        sudo ln -s $(udacity_public_key.secureFilePath) /home/$(userAgent)/Downloads/
 
 
     
@@ -310,8 +309,9 @@ stages:
                 # 3.2 Download the matching ChromeDriver version.
 
                 #wget https://storage.googleapis.com/chrome-for-testing-public/133.0.6943.98/linux64/chromedriver-linux64.zip
-                wget_zip_file="https://storage.googleapis.com/chrome-for-testing-public/$(google_version)/linux64/chromedriver-linux64.zip"
-                wget $(wget_zip_file)
+                #wget_zip_file="https://storage.googleapis.com/chrome-for-testing-public/$(google_version)/linux64/chromedriver-linux64.zip"
+                #wget $(wget_zip_file)
+                wget https://storage.googleapis.com/chrome-for-testing-public/$(chromedriverVersion)/linux64/chromedriver-linux64.zip
 
                 # 3.3 Extract and configure ChromeDriver to make it globally accessible:
                 unzip chromedriver-linux64.zip
