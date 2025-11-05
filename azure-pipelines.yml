@@ -75,29 +75,12 @@ stages:
         sshPublicKey: '$(SSH_PUBLIC_KEY)'            # variable value
         sshKeySecureFile: 'azure_pipeline_id_rsa' # Use secure file feature in the pipeline library UI to save the "id_rsa" file, as mentioned here: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops#add-a-secure-file
     
-    - bash: |
-        ls -l /home/devopsagent/myagent/_work/_temp/id_rsa
-        find /home/devopsagent -type f -name "id_rsa"
-        find /home/devopsagent -type f -name "*known*"
-        find /home/devopsagent -type f -name "authorized_keys"
-        echo "HOME is $(HOME)"
-        echo "PATH is $(PATH)"
-        echo "USER is $(USER)"
     - task: DownloadSecureFile@1
       name: udacity_public_key
       displayName: mySecureFile
       inputs:
         secureFile: 'azure_pipeline_id_rsa.pub'
     
-    - bash: |
-        ls -l /home/devopsagent/myagent/_work/_temp/id_rsa
-        find /home/devopsagent -type f -name "id_rsa"
-        find /home/devopsagent -type f -name "*known*"
-        find /home/devopsagent -type f -name "authorized_keys"
-        echo "HOME is $(HOME)"
-        echo "PATH is $(PATH)"
-        echo "USER is $(USER)"
-        #cp ~/myagent/_work/_temp/azure_pipeline_id_rsa.pub ~/.ssh/azure_pipeline_id_rsa.pub
     
     - script: |
         echo Installing $(udacity_public_key.secureFilePath) to the trusted CA directory...
@@ -109,6 +92,7 @@ stages:
           mkdir $trusted_folder
         fi
         sudo ln -s $(udacity_public_key.secureFilePath) $trusted_folder
+        #cp ~/myagent/_work/_temp/azure_pipeline_id_rsa.pub ~/.ssh/azure_pipeline_id_rsa.pub
 
 
     
@@ -349,21 +333,14 @@ stages:
                 mv /home/testuser/azagent/_work/1/drop-uitests/$(Build.BuildId)-uitests.zip app
                 cd app
                 unzip -o $(Build.BuildId)-uitests.zip
-                # FILE=/home/testuser/app/chromedriver_linux64.zip
-                # if [ ! -f "$FILE" ]; then
-                #     echo f"file $FILE does not exist"
-                #     LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
-                #     wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip
-                #     unzip -o chromedriver_linux64.zip
-                #     sudo ln -s $PWD/chromedriver /usr/local/bin/chromedriver
-                # fi
-                
-                
+
                 export PATH=$PATH:/home/testuser/app
                 echo "Starting Selenium Tests"
                 echo "PATH is $PATH"
                 python3 add_remove_from_cart.py >> selenium.log
+                cat selenium.log
                 echo "Completed Selenium Tests. Check selenium.log for results."
+                uname -a
 
                 
 
