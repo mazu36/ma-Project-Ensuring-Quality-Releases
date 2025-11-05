@@ -105,20 +105,19 @@ stages:
                 sudo apt install -f ./google-chrome-stable_current_amd64.deb -y
 
                 google-chrome --version
-                echo "end of fin"
                 wget https://storage.googleapis.com/chrome-for-testing-public/142.0.7444.59/linux64/chromedriver-linux64.zip
-                # NEW fin
                 
                 unzip chromedriver-linux64.zip
                 sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
                 sudo chmod +x /usr/local/bin/chromedriver
 
+                google-chrome --version
                 chromedriver --version
 
                 sudo apt-get upgrade -y
                 sudo apt-get install python3-pip -y
                 sudo apt-get install unzip -y
-                sudo apt-get install -y chromium-browser
+                #sudo apt-get install -y chromium-browser
                 which python3
                 python3 --version
                 echo $PATH
@@ -128,7 +127,7 @@ stages:
                 PATH=$PATH:"~/.local/bin"
                 echo "PATH after install selenium is $PATH"
                 pip show selenium
-                echo $PATH
+
                 chromedriver -v
                 google-chrome --version
                 which chromedriver
@@ -140,10 +139,10 @@ stages:
                 cd ~/
                 DIR=/home/testuser/app
                 if [ -d "$DIR" ]; then
-                    rm -r $DIR/*
-                else
-                    mkdir app
+                    rm -r $DIR/
                 fi
+                
+                mkdir app
                 mv /home/testuser/azagent/_work/1/drop-uitests/$(Build.BuildId)-uitests.zip app
                 cd app
                 unzip -o $(Build.BuildId)-uitests.zip
