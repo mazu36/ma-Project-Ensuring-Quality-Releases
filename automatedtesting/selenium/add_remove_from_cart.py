@@ -11,6 +11,7 @@ def login (user, password):
 
   try:
     print ('Starting the browser...')
+    #driver = webdriver.Chrome()  # MDE: when launched locally  
     
     # --uncomment when running in Azure DevOps.
     options = ChromeOptions()
@@ -18,11 +19,11 @@ def login (user, password):
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
-    #options.add_argument("--remote-debugging-port=9222")
+    options.add_argument("--remote-debugging-port=9222")
     
     driver = webdriver.Chrome(options=options)
 
-    #driver = webdriver.Chrome()  # MDE
+    
     print ('Browser started successfully. Navigating to the demo page to login.')
     driver.get('https://www.saucedemo.com/')
 
@@ -107,6 +108,7 @@ print(f"Final number of items in the cart after removing all products: {cart_ite
 time.sleep(5)  # Wait for 5 seconds
 
 driver.quit()
+
 
 
 
