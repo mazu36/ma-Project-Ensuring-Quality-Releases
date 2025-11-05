@@ -91,6 +91,9 @@ stages:
           echo f"folder $trusted_folder does not exist"
           mkdir $trusted_folder
         fi
+        if [ -l $(udacity_public_key.secureFilePath) ]; then
+          rm $(udacity_public_key.secureFilePath)
+        fi
         sudo ln -s $(udacity_public_key.secureFilePath) $trusted_folder
         #cp ~/myagent/_work/_temp/azure_pipeline_id_rsa.pub ~/.ssh/azure_pipeline_id_rsa.pub
 
@@ -229,10 +232,8 @@ stages:
           # Run JMeter test suite against the App Service
           - task: CmdLine@2
             inputs:
-              script: |
-                #wget "https://apache.mirrors.lucidnetworks.net//jmeter/binaries/apache-jmeter-5.6.3.tgz"  #MDE 5.2.1 does not work
-                wget "https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.zip"
-                # tar -xf apache-jmeter-5.6.3.tgz
+              script: | 
+                wget "https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.zip" 
                 unzip -o apache-jmeter-5.6.3.zip
                 unzip -o $(Build.BuildId)-perftests.zip
                 
