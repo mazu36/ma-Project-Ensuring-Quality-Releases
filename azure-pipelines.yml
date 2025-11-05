@@ -236,6 +236,7 @@ stages:
           - task: CmdLine@2
             inputs:
               script: | 
+                uname -a
                 wget "https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.zip" 
                 unzip -o apache-jmeter-5.6.3.zip
                 unzip -o $(Build.BuildId)-perftests.zip
