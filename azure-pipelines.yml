@@ -158,6 +158,8 @@ stages:
                 pwd
                 ls -la
                 python3 add_remove_from_cart.py | tee -a ./selenium.log
+                
+                ls -la
                 file -bi ./selenium.log
                 cat ./selenium.log
                 
