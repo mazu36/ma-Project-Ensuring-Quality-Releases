@@ -526,6 +526,19 @@ devopsagent@myLinuxVM:~/myagent/_work/1/drop-perftests$ ssh-keyscan -p 22 132.16
 # -------------------------------------------------------
 # Part 5 : Alert & Monitoring
 # -------------------------------------------------------
+Azure Portal:
+    Create Log Analytics workspace : selenium_Clogs
+    Connect VM into this workspace
+    <analytics workspace> : "Settings" / Table >> Create Table : "New custom log (Direct ingest)" 
+        Name: selenium_CL
+
+    Verify the logs: 
+    <analytics workspace> : "Logs" >> Run query
+```
+selenium_CL
+| sort by TimeGenerated desc
+| limit 100
+```
 
 AAAA
 Configurations

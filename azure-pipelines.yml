@@ -109,9 +109,9 @@ stages:
                 echo $PATH
                 
                 echo "Step 2: Install Google-chrome"
-                #pwd
-                #wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-                #sudo apt install -f ./google-chrome-stable_current_amd64.deb -y
+                pwd
+                wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+                sudo apt install -f ./google-chrome-stable_current_amd64.deb -y
                 google-chrome --version
                 
                 echo "Step 3: Install selenium"
@@ -134,8 +134,6 @@ stages:
                 if [! -f "$FILE" ]; then
                   wget https://storage.googleapis.com/chrome-for-testing-public/142.0.7444.59/linux64/chromedriver-linux64.zip
                   unzip -o ./chromedriver-linux64.zip
-                  #sudo ln -s $PWD/chromedriver /usr/local/bin/chromedriver
-                  #sudo ln -s $DIR/chromedriver /usr/local/bin/chromedriver
                 fi
 
                 echo "Step 5: Copy selenium tests into app folder"
@@ -144,7 +142,6 @@ stages:
                 cp /home/testuser/azagent/_work/1/drop-uitests/$(Build.BuildId)-uitests.zip $DIR
                 unzip -o $(Build.BuildId)-uitests.zip
 
-                #export PATH=$PATH:/home/testuser/app
                 export PATH=$PATH:$DIR
 
                 echo "Step 6: Execute selenium tests"
@@ -158,16 +155,10 @@ stages:
                 cd $DIR
                 pwd
                 ls -la
-                python3 add_remove_from_cart.py >> selenium-ascii.log
+                python3 add_remove_from_cart.py >> selenium.log
+                file -bi selenium.log
                 
-                # detect the character encoding,
-                uchardet selenium_ascii.log
-                file -bi selenium_ascii.log
-                
-                iconv -f us-ascii -t UTF-8 selenium-ascii.log > selenium.log
-
                 ls -la
-                uchardet selenium.log
                 file -bi selenium.log
                 echo "Before cat command"
                 cat selenium.log
