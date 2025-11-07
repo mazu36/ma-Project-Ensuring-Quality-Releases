@@ -17,7 +17,7 @@ variables:
   # Project root folder. Point to the folder containing manage.py file.
   projectRoot: $(System.DefaultWorkingDirectory)
   # Environment name
-  environmentName: 'new-test-vm'   
+  environmentName: 'test-vm'   
   # Web app name
   webAppName: 'myAppli3-AppService' 
   # chromedriver version
