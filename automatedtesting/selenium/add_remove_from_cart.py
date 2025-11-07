@@ -25,19 +25,20 @@ def login (user, password):
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
-    options.add_argument("--remote-debugging-port=9222")
+    #options.add_argument("--remote-debugging-port=9222")
     
     driver = webdriver.Chrome(options=options)
 
-    
-    logging.info('Browser started successfully. Navigating to the demo page to login.')
-    driver.get('https://www.saucedemo.com/') 
+    demo_web_page='https://www.saucedemo.com/'
+    logging.info(f"Browser started successfully. Navigating to the demo page {demo_web_page} to login.")
+    driver.get(demo_web_page) 
+    logging.info(f"Connected to the demo page {demo_web_page} successfully.")
 
-    logging.info(f"Connection of the user {user}:")
+    logging.info(f"Connecting of the user {user}:")
     driver.find_element(By.ID, 'user-name').send_keys(user)
     driver.find_element(By.ID, 'password').send_keys(password)
     driver.find_element(By.ID, 'login-button').click()
-    logging.info(f"Connection of the user {user} is processed successfully")
+    logging.info(f"Connected the user {user} successfully")
     return (0, driver)
   except RuntimeError as e:
     logging.info(f"Error {e} on login of the user {user}")
@@ -62,10 +63,6 @@ driver.implicitly_wait(2)
 logging.info("Retrieving shopping cart icon:")
 cart_icon = driver.find_element(By.CSS_SELECTOR, "a.shopping_cart_link")
 logging.info("Shopping cart icon is retrieved successfully")
-cart_item_count = cart_icon.text
-logging.info(f"Initial Number of items in the cart: {cart_item_count} item(s)")
-
-
 
 
 time.sleep(5)  # Wait for 5 seconds
@@ -80,17 +77,14 @@ buttons_ids = [button.get_attribute("id") for button in buttons_add]
 logging.info(f"Buttons 'add-to-cart' are: {buttons_ids}")
 
 
-#driver.implicitly_wait(20)
+driver.implicitly_wait(2)
+#time.sleep(20)  # Wait for 20 seconds 
 
-time.sleep(20)  # Wait for 20 seconds 
-
+nb_item_added=0
 for idx, button_id in enumerate(buttons_ids): 
   driver.find_element(By.ID, button_id).click() 
-  cart_item_count = cart_icon.text
-  logging.info(f"Step {idx} Adding: Number of items in the cart: {cart_item_count} button_id  {button_id}") 
-
-cart_item_count = cart_icon.text
-logging.info(f"Final number of items in the cart after adding all products: {cart_item_count} item(s)")
+  logging.info(f"Item {idx+1} added successfully:  button_id {button_id}") 
+  nb_item_added +=1
 
 
 #  --- Test 2 ---
@@ -101,13 +95,16 @@ buttons_rm = driver.find_elements(By.CSS_SELECTOR, "button[id^='remove']")
 # Extract button IDs into a Python list
 buttons_ids = [button.get_attribute("id") for button in buttons_rm]
 logging.info(f"Buttons 'remove' are: {buttons_ids}")
+
+nb_item_removed=0
 for idx, button_id in enumerate(buttons_ids):
   driver.find_element(By.ID, button_id).click()
-  cart_item_count = cart_icon.text
-  logging.info(f"Step {idx} Removing: Number of items in the cart: {cart_item_count}")
+  logging.info(f"Item {idx+1} removed successfully:  button_id {button_id}") 
+  nb_item_removed +=1
 
-cart_item_count = cart_icon.text 
-logging.info(f"Final number of items in the cart after removing all products: {cart_item_count} item(s)")
+
+logging.info(f"Number of items added into the cart: {nb_item_added} item(s)")
+logging.info(f"Number of items removed into the cart: {nb_item_removed} item(s)")
 
 
 time.sleep(5)  # Wait for 5 seconds

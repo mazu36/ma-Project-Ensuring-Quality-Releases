@@ -185,16 +185,10 @@ Create a DevOps project
         sudo apt install software-properties-common -y
         sudo add-apt-repository ppa:deadsnakes/ppa -y
 
-        # Check if the VM has Python installed already. Otherwise, use these commands to install Python 3.7
-
-        sudo apt install python3.7
-        sudo apt-get install python3.7-venv
-        sudo apt-get install python3-pip
-        python3.7 --version
-        pip --version  
 
         # Check if the VM has Python installed already. Otherwise, use these commands to install Python 3.9
 
+        python3 --version
         sudo apt install python3.9 -y
         sudo apt-get install python3.9-venv -y
         sudo apt-get install python3-pip -y
@@ -446,6 +440,14 @@ Instructions:
                 }
 6. Ensure the variables are correctly set in the terraform files
     Verify whether the variables in input.tf has values attributed (example: resource_group variable)
+
+7. For web application fakerestapi:
+    Azure CLI:
+        create manually application service environment
+        using the command: `az webapp up [--app-service-environment]`
+    This application service needs to be created before the deployment of the web application by terraform
+8. python script for selenium test
+    develop python script which first add the products and the remove the products
 
 7. Develop **azure-pipelines.yml** file for the two stages
     Build
@@ -711,3 +713,10 @@ TestSuite.Regression.json
 [Azure Pipelines task reference](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/?view=azure-pipelines#what-are-task-input-aliases)
 
 [How to Correctly Install ChromeDriver on Ubuntu ](https://tecadmin.net/install-chromedriver-on-ubuntu/)
+
+[Collect text logs with the Log Analytics agent in Azure Monitor](https://learn.microsoft.com/en-us/previous-versions/azure/azure-monitor/agents/data-sources-custom-logs)
+
+[Run your app in Azure App Service directly from a ZIP package](https://learn.microsoft.com/en-us/azure/app-service/deploy-run-package)
+[Enable build automation for ZIP deploy](https://learn.microsoft.com/en-us/azure/app-service/deploy-zip?tabs=cli#enable-build-automation-for-zip-deploy)
+
+https://stackoverflow.com/questions/71878886/terraform-wiping-out-azure-app-configuration-settings-even-if-ignore-changes-swi

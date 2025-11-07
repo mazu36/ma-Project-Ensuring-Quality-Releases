@@ -53,7 +53,7 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         backendServiceArm: '$(azureServiceConnectionId)'
         backendAzureRmResourceGroupName: 'Azuredevops'  
-        backendAzureRmStorageAccountName: 'tfstate1319622022'
+        backendAzureRmStorageAccountName: 'tfstate1900331352'
         backendAzureRmContainerName: 'tfstate'
         backendAzureRmKey: 'test.terraform.tfstate'
 
@@ -204,15 +204,57 @@ stages:
 
 #--------------------------------------------#  
 # DEPLOYMENT STAGE
-#--------------------------------------------#    
-#--------------------------------------------#  
-# DEPLOYMENT STAGE
-#--------------------------------------------#    
+#--------------------------------------------#      
 - stage: Deploy
   jobs:
   #--------------------------------------------#  
   # Deploy FakeRestAPI Web App
   # ToDo: Provide <environment name> you created in your DevOps project
+  - deployment: FakeRestAPI
+    pool:
+      vmImage: 'Ubuntu-22.04'       
+      name: myAgentPool        # important !
+    environment: "$(environmentName)"  
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureWebApp@1
+            displayName: 'Deploy Azure Web App'
+            inputs:
+              azureSubscription: $(azureServiceConnectionId)    
+              appName: $(webAppName)  
+              appType: webApp
+              #package: $(Pipeline.Workspace)/<artifact>/<archiveFile> 
+              package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
+
+
+            
+          #--------------------------------------------#    
+          # Run JMeter test suite against the App Service
+          - task: CmdLine@2
+            inputs:
+              script: |
+                #wget "https://apache.mirrors.lucidnetworks.net//jmeter/binaries/apache-jmeter-5.6.3.tgz"   
+                wget "https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.zip"
+                unzip -o apache-jmeter-5.6.3.zip
+                unzip -o $(Build.BuildId)-perftests.zip
+                
+                source /etc/environment
+                echo $PATH
+                echo $JAVA_HOME
+                pwd
+                
+                #./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
+
+                ./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f  -l results_file.txt -e -o web_report_folder
+                cat jmeter.log     
+                grep -ni summary jmeter.log
+                grep -ni starting jmeter.log
+
+              #workingDirectory: $(Pipeline.Workspace)/<artifact>            # ToDo: Use the artifact name from the task above
+              workingDirectory: $(Pipeline.Workspace)/drop-perftests/
+              
 
               
   #--------------------------------------------#  
@@ -238,78 +280,57 @@ stages:
                 #! /bin/bash
 
                 # NEW version 142.0.7444.59
-                echo "DEBUG 1"
+                echo "Step 1: Install pip, unzip"
                 sudo apt update && sudo apt upgrade -y 
                 sudo apt-get install python3-pip -y
                 sudo apt-get install unzip -y
-                #sudo apt-get install -y chromium-browser # MDE ... we use google chrome
 
                 which python3
                 python3 --version
                 echo $PATH
                 
-                echo "DEBUG 2 "
+                echo "Step 2: Install Google-chrome"
                 pwd
                 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
                 sudo apt install -f ./google-chrome-stable_current_amd64.deb -y
-
                 google-chrome --version
                 
-
-                google-chrome --version
-                chromedriver --version
-
-                
-
+                echo "Step 3: Install selenium"
                 pip3 install selenium
 
                 PATH=$PATH:"~/.local/bin"
-                echo "PATH after install selenium is $PATH"
+                echo "PATH after install selenium is: $PATH"
                 pip show selenium
 
-                echo "DEBUG 3"
-                chromedriver -v
-                google-chrome --version
-                which chromedriver
-                path_to_chromedriver=`which chromedriver`
-                PATH=$PATH:$path_to_chromedriver
-
-                echo "DEBUG 4"
-                echo "PATH later is $PATH"
-                cd ~/
+                echo "Step 4: Install chromedriver in app folder"
                 DIR=/home/testuser/app
                 if [ -d "$DIR" ]; then
                     rm -r $DIR
                 fi
                 
                 mkdir app
-                mv /home/testuser/azagent/_work/1/drop-uitests/$(Build.BuildId)-uitests.zip app
                 cd app
-                unzip -o $(Build.BuildId)-uitests.zip
+                
                 FILE=/home/testuser/app/chromedriver_linux64.zip 
                 if [ ! -f "$FILE" ]; then
                   wget https://storage.googleapis.com/chrome-for-testing-public/142.0.7444.59/linux64/chromedriver-linux64.zip
-                  pwd 
-                  echo "DEBUG 3"
-                  pwd
                   unzip -o ./chromedriver-linux64.zip
-                  ls -lart
-                 
-                  #sudo mv ./chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
-                  #sudo chmod +x /usr/local/bin/chromedriver
- 
-                  # LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
-                  # wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip
-                  #unzip -o chromedriver_linux64.zip
-                  sudo ln -s $PWD/chromedriver /usr/local/bin/chromedriver
+                  #sudo ln -s $PWD/chromedriver /usr/local/bin/chromedriver
                 fi
 
-                
+                echo "Step 5: Deploy selenium tests into app folder"
+                mv /home/testuser/azagent/_work/1/drop-uitests/$(Build.BuildId)-uitests.zip app
+                unzip -o $(Build.BuildId)-uitests.zip
+
+                pwd
+                ls -la
                 chromedriver -v
                 google-chrome --version
                 which chromedriver
                 
                 export PATH=$PATH:/home/testuser/app
+
+                echo "Step 6: Execute selenium tests"
                 echo "Starting Selenium Tests"
                 echo "PATH is $PATH"
                 python3 add_remove_from_cart.py >> selenium.log
