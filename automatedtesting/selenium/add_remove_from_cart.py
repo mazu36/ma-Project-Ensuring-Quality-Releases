@@ -77,8 +77,8 @@ buttons_ids = [button.get_attribute("id") for button in buttons_add]
 logging.info(f"Buttons 'add-to-cart' are: {buttons_ids}")
 
 
-driver.implicitly_wait(2)
-#time.sleep(20)  # Wait for 20 seconds 
+#driver.implicitly_wait(2)
+time.sleep(20)  # Wait for 20 seconds 
 
 nb_item_added=0
 for idx, button_id in enumerate(buttons_ids): 
@@ -96,6 +96,7 @@ buttons_rm = driver.find_elements(By.CSS_SELECTOR, "button[id^='remove']")
 buttons_ids = [button.get_attribute("id") for button in buttons_rm]
 logging.info(f"Buttons 'remove' are: {buttons_ids}")
 
+time.sleep(40)  # Wait for 40 seconds
 nb_item_removed=0
 for idx, button_id in enumerate(buttons_ids):
   driver.find_element(By.ID, button_id).click()
@@ -103,8 +104,8 @@ for idx, button_id in enumerate(buttons_ids):
   nb_item_removed +=1
 
 
-logging.info(f"Number of items added into the cart: {nb_item_added} item(s)")
-logging.info(f"Number of items removed into the cart: {nb_item_removed} item(s)")
+logging.info(f"Number of items added   into the cart: {nb_item_added} item(s)")
+logging.info(f"Number of items removed from the cart: {nb_item_removed} item(s)")
 
 
 time.sleep(5)  # Wait for 5 seconds

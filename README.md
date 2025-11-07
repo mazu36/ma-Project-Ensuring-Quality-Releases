@@ -445,6 +445,7 @@ Instructions:
     Azure CLI:
         create manually application service environment
         using the command: `az webapp up [--app-service-environment]`
+        az webapp up --app-service-environment  TODO MDE
     This application service needs to be created before the deployment of the web application by terraform
 8. python script for selenium test
     develop python script which first add the products and the remove the products
