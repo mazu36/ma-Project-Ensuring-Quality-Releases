@@ -108,6 +108,9 @@ for idx, button_id in enumerate(buttons_ids):
 logging.info(f"Number of items added   into the cart: {nb_item_added} item(s)")
 logging.info(f"Number of items removed from the cart: {nb_item_removed} item(s)")
 
+print(f"Number of items added   into the cart: {nb_item_added} item(s)")
+print(f"Number of items removed from the cart: {nb_item_removed} item(s)")
+
 
 time.sleep(5)  # Wait for 5 seconds
 

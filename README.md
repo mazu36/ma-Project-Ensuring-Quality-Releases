@@ -721,3 +721,8 @@ TestSuite.Regression.json
 [Enable build automation for ZIP deploy](https://learn.microsoft.com/en-us/azure/app-service/deploy-zip?tabs=cli#enable-build-automation-for-zip-deploy)
 
 https://stackoverflow.com/questions/71878886/terraform-wiping-out-azure-app-configuration-settings-even-if-ignore-changes-swi
+
+
+
+
+Analytics  <my workspace> Classic >> Virtual Machines (deprecated) .... Connect
