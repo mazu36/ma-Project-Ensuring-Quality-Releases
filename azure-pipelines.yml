@@ -129,7 +129,7 @@ stages:
                 
                 cd $DIR
                 #FILE=/home/testuser/app/chromedriver_linux64.zip 
-                FILE=/$DIR/chromedriver_linux64.zip 
+                FILE=$DIR/chromedriver_linux64.zip 
                 echo "FILE verified is $FILE"
                 if [! -f "$FILE" ]; then
                   wget https://storage.googleapis.com/chrome-for-testing-public/142.0.7444.59/linux64/chromedriver-linux64.zip
@@ -158,9 +158,16 @@ stages:
                 cd $DIR
                 pwd
                 ls -la
-                python3 add_remove_from_cart.py >> selenium.log
+                python3 add_remove_from_cart.py >> selenium-ascii.log
                 
+                # detect the character encoding,
+                uchardet selenium_ascii.log
+                file -bi selenium_ascii.log
+                
+                iconv -f us-ascii -t UTF-8 selenium-ascii.log > selenium.log
+
                 ls -la
+                uchardet selenium.log
                 file -bi selenium.log
                 echo "Before cat command"
                 cat selenium.log
