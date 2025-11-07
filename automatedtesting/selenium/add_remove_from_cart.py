@@ -88,6 +88,7 @@ for idx, button_id in enumerate(buttons_ids):
 
 
 #  --- Test 2 ---
+time.sleep(40)  # Wait for 40 seconds
 logging.info("*** UI Test 2: removing all products from a cart***")
 # Find all <button> elements with an 'id' attribute whose id starts with 'add-to-cart'
 buttons_rm = driver.find_elements(By.CSS_SELECTOR, "button[id^='remove']")
@@ -96,7 +97,7 @@ buttons_rm = driver.find_elements(By.CSS_SELECTOR, "button[id^='remove']")
 buttons_ids = [button.get_attribute("id") for button in buttons_rm]
 logging.info(f"Buttons 'remove' are: {buttons_ids}")
 
-time.sleep(40)  # Wait for 40 seconds
+
 nb_item_removed=0
 for idx, button_id in enumerate(buttons_ids):
   driver.find_element(By.ID, button_id).click()
@@ -111,6 +112,7 @@ logging.info(f"Number of items removed from the cart: {nb_item_removed} item(s)"
 time.sleep(5)  # Wait for 5 seconds
 
 driver.quit()
+
 
 
 
