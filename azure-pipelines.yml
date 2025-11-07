@@ -129,8 +129,9 @@ stages:
                 
                 cd $DIR
                 #FILE=/home/testuser/app/chromedriver_linux64.zip 
+                echo "FILE verified is $FILE"
                 FILE=/$DIR/chromedriver_linux64.zip 
-                if [ ! -f "$FILE" ]; then
+                if [! -f "$FILE" ]; then
                   wget https://storage.googleapis.com/chrome-for-testing-public/142.0.7444.59/linux64/chromedriver-linux64.zip
                   unzip -o ./chromedriver-linux64.zip
                   #sudo ln -s $PWD/chromedriver /usr/local/bin/chromedriver
@@ -157,11 +158,13 @@ stages:
                 cd $DIR
                 pwd
                 ls -la
-                python3 add_remove_from_cart.py | tee -a ./selenium.log
+                python3 add_remove_from_cart.py | tee -a selenium.log
                 
                 ls -la
-                file -bi ./selenium.log
-                cat ./selenium.log
+                file -bi selenium.log
+                echo "Before cat command"
+                cat selenium.log
+                echo "After cat command"
                 
                 echo "Completed Selenium Tests. Check selenium.log for results."
 
