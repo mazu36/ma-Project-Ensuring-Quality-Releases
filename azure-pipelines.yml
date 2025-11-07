@@ -304,12 +304,11 @@ stages:
 
                 echo "Step 4: Install chromedriver in app folder"
                 DIR=/home/testuser/app
-                if [ ! -d "$DIR" ]; then
-                    #rm -r $DIR
+                if [ ! -d "$DIR" ]; then 
                     mkdir $DIR
                 fi
                 
-                
+                cd $DIR
                 #FILE=/home/testuser/app/chromedriver_linux64.zip 
                 FILE=/$DIR/chromedriver_linux64.zip 
                 if [ ! -f "$FILE" ]; then
