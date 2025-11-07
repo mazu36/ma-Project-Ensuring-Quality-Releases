@@ -45,119 +45,9 @@ stages:
     
     # Run Terraform Init on the pipeline agent 
     # ToDo: Replace the resource group name, storage account name, and container name below
-    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
-      displayName: 'Terrafom init'
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-        backendServiceArm: '$(azureServiceConnectionId)'
-        backendAzureRmResourceGroupName: 'Azuredevops'  
-        backendAzureRmStorageAccountName: 'tfstate1900331352'
-        backendAzureRmContainerName: 'tfstate'
-        backendAzureRmKey: 'test.terraform.tfstate'
-
-    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
-      displayName: Terraform validate
-      inputs:
-        provider: 'azurerm'
-        command: 'validate'
-
-    # OPTIONAL - This step is needed only 
-    # if your Terraform VM uses an SSH key pair for login and you want your pipeline agent to connect to it. 
-    # Generate an SSH key pair in your local/AZ Cloud shell. 
-    # Use the public key in the Terraform VM module. 
-    # Install public key and private key file to the pipeline agent, using the task below. 
-    # ToDo: Change the inputs value below
-    - task: InstallSSHKey@0
-      inputs:
-        knownHostsEntry: '$(KNOWN_HOSTS_STRING)' # variable value  # MDE TODO
-        sshPublicKey: '$(SSH_PUBLIC_KEY)'            # variable value
-        sshKeySecureFile: 'azure_pipeline_id_rsa' # Use secure file feature in the pipeline library UI to save the "id_rsa" file, as mentioned here: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops#add-a-secure-file
     
-    - task: DownloadSecureFile@1
-      name: udacity_public_key
-      displayName: mySecureFile
-      inputs:
-        secureFile: 'azure_pipeline_id_rsa.pub'
-    
-    
-    - script: |
-        echo Installing $(udacity_public_key.secureFilePath) to the trusted CA directory...
-        sudo chown root:root $(udacity_public_key.secureFilePath)
-        sudo chmod a+r $(udacity_public_key.secureFilePath)
-        trusted_folder="/home/$(userAgent)/Downloads/"
-        if [ ! -d $trusted_folder ]; then
-          echo f"folder $trusted_folder does not exist"
-          mkdir $trusted_folder
-        fi
-        echo "File path is: $(udacity_public_key.secureFilePath)"
-        #if [ -l $(udacity_public_key.secureFilePath) ]; then
-        #  #rm $(udacity_public_key.secureFilePath)
-        #  rm azure_pipeline_id_rsa.pub
-        #fi
-        sudo ln -sfn $(udacity_public_key.secureFilePath) $trusted_folder
-        #cp ~/myagent/_work/_temp/azure_pipeline_id_rsa.pub ~/.ssh/azure_pipeline_id_rsa.pub
 
-
-    
-    # Run Terraform Apply
-    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
-      displayName: Terraform apply
-      inputs:
-        provider: 'azurerm'
-        command: 'apply'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-
-    # ToDo: Change the workingDirectory path, as applicable to you
-    # Destroy the resources in Azure by running a separate pipeline. 
-    # - task: TerraformTaskV3@3
-    #   displayName: Terraform destroy
-    #   inputs:
-    #     provider: 'azurerm'
-    #     command: 'destroy'
-    #     workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-    #     environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-
-#--------------------------------------------#    
-    # Postman - Install Newman    
-    # ToDo: Update the command and verify the working directory
-
-
-    - task: CmdLine@2
-      displayName: Install Newman
-      inputs:
-        script: 'sudo npm install -g newman'
-        workingDirectory: $(System.DefaultWorkingDirectory)
-    # Postman Data Validation Test Suite    
-    # ToDo: Verify the working directory
-    - task: CmdLine@2
-      displayName: Run Data Validation Tests
-      continueOnError: true
-      inputs:
-        script: 'newman run TestSuite.Data-Validation.json --reporters cli,junit --reporter-junit-export ./postman_results/TEST-DataValidation.xml'
-        ## -e Test.environment.json   # MDE: -e unuseful for my test here
-        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-    # Postman Regression Test Suite    
-    # ToDo: Verify the working directory
-    - task: CmdLine@2
-      displayName: Run Regression Tests
-      continueOnError: true
-      inputs:
-        script: 'newman run TestSuite.Regression.json --reporters cli,junit --reporter-junit-export ./postman_results/TEST-Regression.xml'
-        ## -e Test.environment.json   # MDE: -e unuseful for my test here
-        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-    # Postman - Publish Results 
-    # ToDo: Complete the task as explained here: https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=trx%2Cyaml#yaml-snippet
-    - task: PublishTestResults@2
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '**/TEST-*.xml'
-        searchFolder:     '$(System.DefaultWorkingDirectory)/automatedtesting/postman/postman_results'  
-        mergeTestResults: true
-        testRunTitle:     'Postman Test'   
-
+  
 #--------------------------------------------#
     # Selenium (UI) Test Suite - Archive the package  
     # "ArchiveFiles@2" picks up the web package and archives it.
@@ -173,88 +63,17 @@ stages:
       displayName: 'Upload Package uitests'
       artifact: drop-uitests
 
-    #--------------------------------------------#    
-    # FakeRestAPI - Archive
-    # ToDo: Complete the ArchiveFiles@2 task and publish step 
-    - task: ArchiveFiles@2
-      displayName: 'Archive FakeRestAPI'
-      inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/fakerestapi'  
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
-      displayName: 'Upload Package fakerestapi'
-      artifact: drop-fakerestapi
-
-    #--------------------------------------------#  
-    # JMeter (Performance) Test Suite - Archive
-    # ToDo: Complete the ArchiveFiles@2 task and publish step 
-    - task: ArchiveFiles@2
-      displayName: 'Archive PerformanceTestSuite'
-      inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/test_plans'  
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip'
-    # JMeter Test Suite - Publish    
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip
-      displayName: 'Upload Package perftests'
-      artifact: drop-perftests
+     
+   
 
 #--------------------------------------------#  
 # DEPLOYMENT STAGE
-#--------------------------------------------#      
+#--------------------------------------------#    
 - stage: Deploy
   jobs:
   #--------------------------------------------#  
   # Deploy FakeRestAPI Web App
   # ToDo: Provide <environment name> you created in your DevOps project
-  - deployment: FakeRestAPI
-    pool:
-      vmImage: 'Ubuntu-22.04'       
-      name: myAgentPool        # important !
-    environment: "$(environmentName)"  
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: AzureWebApp@1
-            displayName: 'Deploy Azure Web App'
-            inputs:
-              azureSubscription: $(azureServiceConnectionId)    
-              appName: $(webAppName)  
-              appType: webApp
-              #package: $(Pipeline.Workspace)/<artifact>/<archiveFile> 
-              package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
-
-
-            
-          #--------------------------------------------#    
-          # Run JMeter test suite against the App Service
-          - task: CmdLine@2
-            inputs:
-              script: |
-                #wget "https://apache.mirrors.lucidnetworks.net//jmeter/binaries/apache-jmeter-5.6.3.tgz"   
-                wget "https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.zip"
-                unzip -o apache-jmeter-5.6.3.zip
-                unzip -o $(Build.BuildId)-perftests.zip
-                
-                source /etc/environment
-                echo $PATH
-                echo $JAVA_HOME
-                pwd
-                
-                #./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
-
-                ./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f  -l results_file.txt -e -o web_report_folder
-                cat jmeter.log     
-                grep -ni summary jmeter.log
-                grep -ni starting jmeter.log
-
-              #workingDirectory: $(Pipeline.Workspace)/<artifact>            # ToDo: Use the artifact name from the task above
-              workingDirectory: $(Pipeline.Workspace)/drop-perftests/
-              
 
               
   #--------------------------------------------#  
@@ -276,7 +95,7 @@ stages:
           - task: Bash@3
             inputs:
               targetType: 'inline'
-              script: |
+              script: |        
                 #! /bin/bash
 
                 # NEW version 142.0.7444.59
@@ -304,12 +123,11 @@ stages:
 
                 echo "Step 4: Install chromedriver in app folder"
                 DIR=/home/testuser/app
-                if [ ! -d "$DIR" ]; then
-                    #rm -r $DIR
-                    mkdir $DIR
+                if [ -d "$DIR" ]; then
+                    rm -r $DIR
                 fi
                 
-                #mkdir $DIR
+                mkdir $DIR
                 
                 FILE=/home/testuser/app/chromedriver_linux64.zip 
                 if [ ! -f "$FILE" ]; then
@@ -318,12 +136,12 @@ stages:
                   #sudo ln -s $PWD/chromedriver /usr/local/bin/chromedriver
                 fi
 
-                echo "Step 5: Deploy selenium tests into app folder"
+                echo "Step 5: Copy selenium tests into app folder"
+                cd $DIR
+                ls -la
                 cp /home/testuser/azagent/_work/1/drop-uitests/$(Build.BuildId)-uitests.zip $DIR
                 unzip -o $(Build.BuildId)-uitests.zip
 
-
-                
                 export PATH=$PATH:/home/testuser/app
 
                 echo "Step 6: Execute selenium tests"
@@ -341,3 +159,6 @@ stages:
                 echo "Completed Selenium Tests. Check selenium.log for results."
 
                 
+
+
+
