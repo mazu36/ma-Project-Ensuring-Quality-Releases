@@ -158,5 +158,8 @@ stages:
                 pwd
                 ls -la
                 python3 add_remove_from_cart.py | tee -a ./selenium.log
+                file -bi ./selenium.log
                 cat ./selenium.log
+                
                 echo "Completed Selenium Tests. Check selenium.log for results."
+
