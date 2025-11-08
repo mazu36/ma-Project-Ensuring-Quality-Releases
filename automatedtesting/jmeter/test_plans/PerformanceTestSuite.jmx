@@ -9,7 +9,7 @@
     </TestPlan>
     <hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="fakeRestApi Stress  test" enabled="true">
-        <intProp name="ThreadGroup.num_threads">2</intProp>
+        <intProp name="ThreadGroup.num_threads">15</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
@@ -29,7 +29,7 @@
         </HeaderManager>
         <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET All Activities" enabled="true">
-          <stringProp name="HTTPSampler.domain">fakerestapi.azurewebsites.net</stringProp>
+          <stringProp name="HTTPSampler.domain">myappli3-appservice.azurewebsites.net</stringProp>
           <stringProp name="HTTPSampler.port">80</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
           <stringProp name="HTTPSampler.path">/api/v1/Activities</stringProp>
@@ -149,7 +149,7 @@
       </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="fakeRestApi Endurance  test">
         <intProp name="ThreadGroup.num_threads">1</intProp>
-        <intProp name="ThreadGroup.ramp_time">10</intProp>
+        <intProp name="ThreadGroup.ramp_time">30</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
@@ -168,7 +168,7 @@
         </HeaderManager>
         <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET All Activities" enabled="true">
-          <stringProp name="HTTPSampler.domain">fakerestapi.azurewebsites.net</stringProp>
+          <stringProp name="HTTPSampler.domain">myappli3-appservice.azurewebsites.net</stringProp>
           <stringProp name="HTTPSampler.port">80</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
           <stringProp name="HTTPSampler.path">/api/v1/Activities</stringProp>
