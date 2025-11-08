@@ -255,7 +255,11 @@ stages:
               #workingDirectory: $(Pipeline.Workspace)/<artifact>            # ToDo: Use the artifact name from the task above
               workingDirectory: $(Pipeline.Workspace)/drop-perftests/
               
-
+          # JMeter - Publish Results 
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: '$(Pipeline.Workspace)/1/drop-perftests/web_report_folder'
+              publishLocation: 'pipeline'  
               
   #--------------------------------------------#  
   # Selenium | Functional UI Tests

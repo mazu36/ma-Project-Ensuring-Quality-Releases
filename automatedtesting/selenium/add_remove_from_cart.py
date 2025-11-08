@@ -87,7 +87,7 @@ logging.info(f"Buttons 'add-to-cart' are: {buttons_ids}")
 
 
 driver.implicitly_wait(2)
-time.sleep(2)  # Wait for 2 seconds
+time.sleep(20)  # Wait for 20 seconds
 
 nb_item_added=0
 time.sleep(2)  # Wait for 2 seconds

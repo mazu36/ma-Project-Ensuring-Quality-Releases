@@ -535,13 +535,28 @@ devopsagent@myLinuxVM:~/myagent/_work/1/drop-perftests$ ssh-keyscan -p 22 132.16
 # -------------------------------------------------------
 # Part 5 : Alert & Monitoring
 # -------------------------------------------------------
-Azure Portal:
-    Create Log Analytics workspace : selenium_Clogs
-    Connect VM into this workspace
-    <analytics workspace> : "Settings" / Table >> Create Table : "New custom log (Direct ingest)" 
-        Name: selenium_CL
 
-    Verify the logs: 
+http://myappli3-appservice.azurewebsites.net/ggg
+
+
+Azure Portal:
+    1. Create "Log Analytics workspace" : selenium-Clogs
+        Resource group: Azuredevops2
+        Name: selenium-Clogs
+        Location: "North Erurope"
+    2. Connect VM into this workspace
+        <analytics workspace> : "Classic" / "Virtual Machines" >> "myAppli3-vm >> "Connect"
+    3. Create a Table
+        <analytics workspace> : "Settings" / Table >> Create Table : "New custom log (Agent)" 
+            Sample log: <local file with the logs generated>
+            Record delimiter: new line
+            Collection Path:  Type: Linux, Path: /home/testuser/*log
+            Custom log name: selenium_CL
+
+    ==> in the List of tables, we can see :
+       selenium_CL   User table (classic)
+
+    4. Verify the logs: 
     <analytics workspace> : "Logs" >> Run query
 ```
 selenium_CL
