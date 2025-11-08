@@ -247,7 +247,7 @@ stages:
                 
                 #./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
 
-                ./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f  -l results_file.txt -e -o web_report_folder
+                ./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f  -l results_file.txt -e -o $(Build.BuildId)-web_report_folder
                 cat jmeter.log     
                 grep -ni summary jmeter.log
                 grep -ni starting jmeter.log
