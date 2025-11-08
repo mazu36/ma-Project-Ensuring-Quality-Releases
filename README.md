@@ -108,7 +108,7 @@ Create a DevOps project
     sudo snap install docker
 
     # Check Python version because this agent will build your code.
-    `python3 --version`
+    python3 --version
 
     # Configure the devopsagent user to run Docker.
     sudo groupadd docker
@@ -441,22 +441,16 @@ Instructions:
 6. Ensure the variables are correctly set in the terraform files
     Verify whether the variables in input.tf has values attributed (example: resource_group variable)
 
-7. For web application fakerestapi:
-    Azure CLI:
-        create manually application service environment
-        using the command: `az webapp up [--app-service-environment]`
-        az webapp up --app-service-environment  TODO MDE
-    This application service needs to be created before the deployment of the web application by terraform
-8. python script for selenium test
+7. python script for selenium test
     develop python script which first add the products and the remove the products
 
-7. Develop **azure-pipelines.yml** file for the two stages
+8. Develop **azure-pipelines.yml** file for the two stages
     Build
     Deploy
 
     + Verify the parameters : backendAzureRmStorageAccountName, ...
 
-8. Push into the repository
+9. Push into the repository
     ```
     git add -A
     git commit -m "..."
@@ -466,6 +460,21 @@ Instructions:
 # -------------------------------------------------------
 # Part 4 : Pipeline configuration
 # -------------------------------------------------------
+
+
+## Manual test of the web application (fakerestapi) deployment 
+Azure CLI:
+
+```
+cd <my_path>/automatedtesting/jmeter/fakerestapi
+
+az webapp up --name  myTest533 --resource-group Azuredevops  --runtime "dotnet:8" --os-type "Windows"  --location "northeurope" 
+```
+Test in the web browser:
+https://mytest533.azurewebsites.net/
+
+
+
 
 
 ## Prerequisites for Azure Pipeline: 
