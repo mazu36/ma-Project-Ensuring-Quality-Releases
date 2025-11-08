@@ -264,7 +264,7 @@ stages:
 
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish:  '$(Pipeline.Workspace)/1/drop-perftests/web_report_folder'   # default '$(Build.ArtifactStagingDirectory)'
+              PathtoPublish:  '$(Pipeline.Workspace)/drop-perftests/web_report_folder'   # default '$(Build.ArtifactStagingDirectory)'
               ArtifactName: 'drop-jmeter-results' # Default: drop.
               publishLocation: 'Container' 
 
