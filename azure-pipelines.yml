@@ -260,7 +260,15 @@ stages:
             inputs:
               targetPath: '$(Pipeline.Workspace)/drop-perftests/web_report_folder'
               publishLocation: 'pipeline'  
-              
+
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish:  '$(Pipeline.Workspace)/1/drop-perftests/web_report_folder'   # default '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: 'drop-jmeter-results' # Default: drop.
+              publishLocation: 'Container' 
+
+
   #--------------------------------------------#  
   # Selenium | Functional UI Tests
   # ToDo: 
