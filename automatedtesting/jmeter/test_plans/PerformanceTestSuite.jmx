@@ -32,7 +32,7 @@
           <stringProp name="HTTPSampler.domain">myappli3-appservice.azurewebsites.net</stringProp>
           <stringProp name="HTTPSampler.port">80</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
-          <stringProp name="HTTPSampler.path">/api/v1/Activities</stringProp>
+          <stringProp name="HTTPSampler.path">/swagger/ui/index#!/Activities/Activities_Get</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -171,7 +171,7 @@
           <stringProp name="HTTPSampler.domain">myappli3-appservice.azurewebsites.net</stringProp>
           <stringProp name="HTTPSampler.port">80</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
-          <stringProp name="HTTPSampler.path">/api/v1/Activities</stringProp>
+          <stringProp name="HTTPSampler.path">/swagger/ui/index#!/Activities/Activities_Get</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
